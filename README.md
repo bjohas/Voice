@@ -1,3 +1,11 @@
+> **This is bVoice**, a personal fork of [Voice](https://github.com/PaulWoitaschek/Voice)
+> for a child's bedtime audiobooks: books picked from a home server and synced
+> to the phone, a Bluetooth pillow speaker that starts the book when it connects
+> and is disconnected after a pause, a listening log, and speaker-button taps
+> that jump further. It installs beside Voice as `net.opendeved.bVoice`.
+> **What it adds and how to build it: [BVOICE.md](BVOICE.md).** Everything
+> below is upstream Voice's README; its download links are for Voice, not bVoice.
+
 # Voice
 
 [![CI](https://github.com/PaulWoitaschek/Voice/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/PaulWoitaschek/Voice/actions/workflows/ci.yml)

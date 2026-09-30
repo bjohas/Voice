@@ -42,8 +42,11 @@ android {
     buildConfig = true
   }
   defaultConfig {
-    if (serverToken.get().isEmpty()) {
-      logger.warn("voice: no server token found; this build will be refused by the content server until one is entered in the app")
+    if (serverToken.get().isEmpty() || serverUrl.get().isEmpty()) {
+      logger.warn(
+        "voice: no built-in server address and/or API key. A phone that has them saved keeps using them; " +
+          "a fresh install asks for them in Server books (cogwheel).",
+      )
     }
     val escaped = serverToken.get().replace("\\", "\\\\").replace("\"", "\\\"")
     buildConfigField("String", "SERVER_TOKEN", "\"$escaped\"")
