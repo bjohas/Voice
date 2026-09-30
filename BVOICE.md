@@ -51,6 +51,13 @@ with offset, book, position — in one text file per day
 (`Android/data/net.opendeved.bVoice/files/listening-log/`), uploaded to the
 server after each sync. Code: `:core:listeninglog`.
 
+For now the log also carries **temporary diagnostic lines**, used to get the
+speaker behaviour right: `TAP` (each back/forward tap from a speaker — its
+count in the gesture, what it added, the gap since the key before) and
+`SPEAKER` (the system waking the companion service, connect events, and
+whether auto-play played or why not). They will be removed once the speaker
+behaviour is settled; the `START`/`STOP` lines stay.
+
 ## Building
 
 As for Voice (`./gradlew :app:assembleFreeDebug`). Build with `--no-scan`:
@@ -68,6 +75,11 @@ which the app copies into its settings on first start, from:
 
 A build with defaults has the key inside the APK — do not share it. Without
 them, the build says so and the app asks.
+
+**"Token" and "API key" are the same thing.** The app calls it the API key; the
+build settings and the code (`VOICE_SERVER_TOKEN`, `ServerConfig.token`) keep
+the older name, token. Either way it is the secret the server checks, sent as
+`Authorization: Bearer KEY`.
 
 **Plain HTTP is allowed**, since a home server usually has no certificate
 (`app/src/main/res/xml/network_security_config.xml`); use HTTPS where you can.
