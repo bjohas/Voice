@@ -69,8 +69,8 @@ which the app copies into its settings on first start, from:
 A build with defaults has the key inside the APK — do not share it. Without
 them, the build says so and the app asks.
 
-**Plain HTTP** is allowed only for hosts ending in `.nord` (a mesh VPN); for
-another host, use HTTPS or edit `app/src/main/res/xml/network_security_config.xml`.
+**Plain HTTP is allowed**, since a home server usually has no certificate
+(`app/src/main/res/xml/network_security_config.xml`); use HTTPS where you can.
 
 ## What the server must provide
 

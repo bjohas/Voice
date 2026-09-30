@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  The book server is plain HTTP, reachable only over the mesh VPN, whose hosts
-  are named *.nord. Everything else keeps the platform default: HTTPS only.
+  bVoice syncs from a server whose address is entered in the app, typically a
+  home server without a certificate, so plain HTTP is allowed. What else the
+  app fetches (cover art searches) is HTTPS.
 -->
-<network-security-config>
-  <domain-config cleartextTrafficPermitted="true">
-    <domain includeSubdomains="true">nord</domain>
-  </domain-config>
+<network-security-config xmlns:tools="http://schemas.android.com/tools">
+  <!-- Deliberate: the server is the user's own, often plain HTTP on a home network or VPN. -->
+  <base-config
+    cleartextTrafficPermitted="true"
+    tools:ignore="InsecureBaseConfiguration">
+    <trust-anchors>
+      <certificates src="system" />
+    </trust-anchors>
+  </base-config>
 </network-security-config>
