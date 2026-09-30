@@ -16,6 +16,7 @@ dependencies {
   implementation(projects.core.strings)
   implementation(projects.core.playback)
   implementation(projects.core.data.api)
+  implementation(projects.core.sync)
   implementation(projects.core.documentfile)
   implementation(projects.navigation)
   implementation(projects.core.featureflag)

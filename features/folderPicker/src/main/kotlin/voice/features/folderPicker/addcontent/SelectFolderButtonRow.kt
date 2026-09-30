@@ -5,11 +5,10 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -19,10 +18,15 @@ import voice.core.ui.icons.VoiceIcons
 import voice.features.folderPicker.folderPicker.FileTypeSelection
 
 @Composable
-internal fun SelectFolderButtonRow(onAdd: (FileTypeSelection, Uri) -> Unit) {
-  Row(
+internal fun SelectFolderButtonRow(
+  onAdd: (FileTypeSelection, Uri) -> Unit,
+  onServer: () -> Unit,
+) {
+  // Three buttons can be wider than a phone: wrap rather than clip.
+  FlowRow(
     Modifier.fillMaxWidth(),
-    horizontalArrangement = Arrangement.Center,
+    horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+    verticalArrangement = Arrangement.spacedBy(8.dp),
   ) {
     val openDocumentLauncher = rememberLauncherForActivityResult(
       ActivityResultContracts.OpenDocument(),
@@ -49,7 +53,6 @@ internal fun SelectFolderButtonRow(onAdd: (FileTypeSelection, Uri) -> Unit) {
         }
       },
     )
-    Spacer(modifier = Modifier.size(8.dp))
     SelectFolderButton(
       icon = VoiceIcons.AudioFile,
       text = stringResource(id = R.string.folder_add_type_file),
@@ -60,6 +63,11 @@ internal fun SelectFolderButtonRow(onAdd: (FileTypeSelection, Uri) -> Unit) {
           Logger.w(e, "Could not add file")
         }
       },
+    )
+    SelectFolderButton(
+      icon = VoiceIcons.Download,
+      text = stringResource(id = R.string.folder_add_type_server),
+      onClick = onServer,
     )
   }
 }

@@ -46,3 +46,13 @@ public annotation class DeveloperMenuUnlockedStore
 
 @Qualifier
 public annotation class FeatureFlagOverridesStore
+
+@Qualifier
+public annotation class ServerConfigStore
+
+/** The server book groups chosen for this device. The selection lives here, never on the server. */
+@Qualifier
+public annotation class ServerSelectionStore
+
+@Qualifier
+public annotation class SpeakerSettingsStore

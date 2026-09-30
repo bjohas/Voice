@@ -1,5 +1,6 @@
 package voice.core.data.folders
 
+import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -44,7 +45,7 @@ internal constructor(
           val persistedUris = persistedUriPermissions.persistedUris()
           val documentFiles = uris
             .filter {
-              it in persistedUris
+              it.isOwnFile() || it in persistedUris
             }
             .map { uri ->
               DocumentFileWithUri(
@@ -58,7 +59,12 @@ internal constructor(
     return combine(flows) { it.toMap() }
   }
 
+  // The app's own directory needs no granted permission: nothing to persist,
+  // nothing to release, and no document tree to build.
+  private fun Uri.isOwnFile(): Boolean = scheme == ContentResolver.SCHEME_FILE
+
   private fun Uri.toDocumentFile(folderType: FolderType): CachedDocumentFile {
+    if (isOwnFile()) return cachedDocumentFileFactory.create(this)
     val uri = when (folderType) {
       FolderType.SingleFile -> this
       FolderType.SingleFolder,
@@ -79,13 +85,15 @@ internal constructor(
     type: FolderType,
   ) {
     analytics.event("add_folder", mapOf("type" to type.name))
-    try {
-      context.contentResolver.takePersistableUriPermission(
-        uri,
-        Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION,
-      )
-    } catch (_: SecurityException) {
-      Logger.w("Could not release uri permission for $uri")
+    if (!uri.isOwnFile()) {
+      try {
+        context.contentResolver.takePersistableUriPermission(
+          uri,
+          Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION,
+        )
+      } catch (_: SecurityException) {
+        Logger.w("Could not release uri permission for $uri")
+      }
     }
     scope.launch {
       dataStore(type).updateData {
@@ -99,13 +107,15 @@ internal constructor(
     folderType: FolderType,
   ) {
     analytics.event("remove_folder", mapOf("type" to folderType.name))
-    try {
-      context.contentResolver.releasePersistableUriPermission(
-        uri,
-        Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION,
-      )
-    } catch (_: SecurityException) {
-      Logger.w("Could not release uri permission for $uri")
+    if (!uri.isOwnFile()) {
+      try {
+        context.contentResolver.releasePersistableUriPermission(
+          uri,
+          Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION,
+        )
+      } catch (_: SecurityException) {
+        Logger.w("Could not release uri permission for $uri")
+      }
     }
     scope.launch {
       dataStore(folderType).updateData { folders ->

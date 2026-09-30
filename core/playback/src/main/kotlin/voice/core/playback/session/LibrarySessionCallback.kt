@@ -1,6 +1,10 @@
 package voice.core.playback.session
 
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.os.SystemClock
+import android.view.KeyEvent
 import androidx.datastore.core.DataStore
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
@@ -27,11 +31,16 @@ import kotlinx.coroutines.launch
 import voice.core.data.Book
 import voice.core.data.BookId
 import voice.core.data.repo.BookRepository
+import voice.core.data.speaker.SpeakerSettings
 import voice.core.data.store.CurrentBookStore
+import voice.core.data.store.SeekTimeStore
+import voice.core.data.store.SpeakerSettingsStore
 import voice.core.logging.api.Logger
 import voice.core.playback.player.VoicePlayer
 import voice.core.playback.session.search.BookSearchHandler
 import voice.core.playback.session.search.BookSearchParser
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
 @Inject
 class LibrarySessionCallback(
@@ -43,7 +52,91 @@ class LibrarySessionCallback(
   @CurrentBookStore
   private val currentBookStoreId: DataStore<BookId?>,
   private val bookRepository: BookRepository,
+  @SeekTimeStore
+  private val seekTimeStore: DataStore<Int>,
+  private val mediaKeyLog: MediaKeyLog,
+  private val logNotes: LogNotes,
+  @SpeakerSettingsStore
+  private val speakerSettingsStore: DataStore<SpeakerSettings>,
 ) : MediaLibrarySession.Callback {
+
+  private val tapGesture = TapGesture()
+
+  init {
+    // Whether a tap continues a gesture is decided on the spot, so keep the setting to hand.
+    scope.launch {
+      speakerSettingsStore.data.collect { tapGesture.window = it.tapSpacingMillis.milliseconds }
+    }
+  }
+  private var lastKeyDownAt: Long? = null
+
+  /**
+   * Quick taps on a speaker's or headset's back/forward button add up
+   * (BUTTON-PRESSES.md): the first tap is Media3's, as always -- a seek by the
+   * Seek time -- and each quick tap after it tops the jump up at once. Key-ups,
+   * held repeats and every other key go to Media3 unchanged.
+   */
+  override fun onMediaButtonEvent(
+    session: MediaSession,
+    controllerInfo: ControllerInfo,
+    intent: Intent,
+  ): Boolean {
+    val keyEvent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+      intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT, KeyEvent::class.java)
+    } else {
+      @Suppress("DEPRECATION")
+      intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT)
+    }
+    val forward = when (keyEvent?.keyCode) {
+      KeyEvent.KEYCODE_MEDIA_NEXT, KeyEvent.KEYCODE_MEDIA_FAST_FORWARD, KeyEvent.KEYCODE_MEDIA_SKIP_FORWARD -> true
+      KeyEvent.KEYCODE_MEDIA_PREVIOUS, KeyEvent.KEYCODE_MEDIA_REWIND, KeyEvent.KEYCODE_MEDIA_SKIP_BACKWARD -> false
+      else -> null
+    }
+    if (keyEvent == null || keyEvent.action != KeyEvent.ACTION_DOWN || keyEvent.repeatCount > 0) {
+      return super.onMediaButtonEvent(session, controllerInfo, intent)
+    }
+    // Timed by arrival, not keyEvent.eventTime: keys relayed from a Bluetooth
+    // speaker carry no usable eventTime (the tap tester showed a 0 ms gap for
+    // every tap, however slow), so every tap counted as a quick one.
+    val arrivedAt = SystemClock.elapsedRealtime()
+    val gap = lastKeyDownAt?.let { arrivedAt - it }
+    lastKeyDownAt = arrivedAt
+    val key = KeyEvent.keyCodeToString(keyEvent.keyCode).removePrefix("KEYCODE_MEDIA_").removePrefix("KEYCODE_")
+    val atMillis = System.currentTimeMillis()
+    if (forward == null) {
+      mediaKeyLog.add(KeyPress(key = key, atMillis = atMillis, gapMillis = gap))
+      return super.onMediaButtonEvent(session, controllerInfo, intent)
+    }
+    val taps = tapGesture.tap(forward, arrivedAt)
+    scope.launch {
+      val seekTime = seekTimeStore.data.first().seconds
+      val extra = TapGesture.extraFor(taps, seekTime)
+      mediaKeyLog.add(
+        KeyPress(
+          key = key,
+          atMillis = atMillis,
+          gapMillis = gap,
+          forward = forward,
+          taps = taps,
+          added = extra,
+          total = TapGesture.totalAfter(taps, seekTime),
+        ),
+      )
+      logNotes.note(
+        "TAP",
+        "$key ${if (forward) "fwd" else "back"} x$taps +${extra.inWholeSeconds}s total=${TapGesture.totalAfter(
+          taps,
+          seekTime,
+        ).inWholeSeconds}s " +
+          "gap=${gap}ms eventTime=${keyEvent.eventTime}",
+      )
+      if (taps > 1) {
+        Logger.i("Tap $taps ${if (forward) "forward" else "back"}: $extra more")
+        player.seekBy(extra, forward)
+      }
+    }
+    return if (taps == 1) super.onMediaButtonEvent(session, controllerInfo, intent) else true
+  }
 
   override fun onAddMediaItems(
     mediaSession: MediaSession,

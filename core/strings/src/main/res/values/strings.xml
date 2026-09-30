@@ -84,6 +84,8 @@
     <string name="folder.add.type.file">File</string>
     <!-- Button label for adding a folder of audiobooks. -->
     <string name="folder.add.type.folder">Folder</string>
+    <!-- Button: take books from the bVoice content server instead of picking files. -->
+    <string name="folder.add.type.server">Server</string>
     <!-- Subtitle asking whether the user wants to add a file or folder. -->
     <string name="folder.add.type.subtitle">Would you like to add a single file as a book or a folder?</string>
     <!-- Title for folder mode where subfolders are authors and nested folders are books. -->
@@ -93,7 +95,7 @@
     <!-- Title for folder mode where the selected folder is one book. -->
     <string name="folder.mode.single.title">Single Book Mode: One folder equals one book.</string>
     <!-- Empty-state message when no books are detected from selected files. -->
-    <string name="folder.type.book_example.empty">Voice could not detect any books. Are there any audio files?</string>
+    <string name="folder.type.book_example.empty">bVoice could not detect any books. Are there any audio files?</string>
     <!-- Header above the preview of books detected from a folder structure. -->
     <string name="folder.type.book_example.header">This would lead to the following books being detected</string>
     <!-- Pluralized file count shown in folder structure previews. -->
@@ -122,7 +124,7 @@
     <!-- Button label for granting the storage permission workaround. -->
     <string name="library.storage_permission_bug.action">Grant permission</string>
     <!-- Message explaining why a storage permission workaround is needed. -->
-    <string name="library.storage_permission_bug.message">For certain devices, a system app is missing the necessary permission to access the external storage. This access is essential for Voice to read your audiobooks.</string>
+    <string name="library.storage_permission_bug.message">For certain devices, a system app is missing the necessary permission to access the external storage. This access is essential for bVoice to read your audiobooks.</string>
     <!-- Title for the card explaining a required storage permission workaround. -->
     <string name="library.storage_permission_bug.title">Permission required</string>
     <!-- Media browser title for recently played audiobooks. -->
@@ -140,21 +142,21 @@
     <!-- Description for analytics consent during onboarding. -->
     <string name="onboarding.analytics_consent.description">Allow us to collect anonymous usage data to help improve the app. You can change this later in settings.</string>
     <!-- Title for analytics consent during onboarding. -->
-    <string name="onboarding.analytics_consent.title">Help improve Voice</string>
+    <string name="onboarding.analytics_consent.title">Help improve bVoice</string>
     <!-- Button label for leaving onboarding and starting playback. -->
     <string name="onboarding.completion.action.start_listening">Start Listening</string>
     <!-- Subtitle on the onboarding completion screen. -->
-    <string name="onboarding.completion.subtitle">Your first audiobook is ready to play. Enjoy your journey with Voice!</string>
+    <string name="onboarding.completion.subtitle">Your first audiobook is ready to play. Enjoy your journey with bVoice!</string>
     <!-- Title on the onboarding completion screen. -->
     <string name="onboarding.completion.title">You\'re All Set!</string>
     <!-- Subtitle explaining file and folder choices in onboarding. -->
-    <string name="onboarding.explanation.subtitle">With Voice, you can add books as individual files or organize them in folders. You choose!</string>
+    <string name="onboarding.explanation.subtitle">With bVoice, you can add books as individual files or organize them in folders. You choose!</string>
     <!-- Title on the onboarding explanation screen. -->
     <string name="onboarding.explanation.title">Your Library, Your Way</string>
     <!-- Subtitle on the onboarding welcome screen. -->
     <string name="onboarding.welcome.subtitle">Your personal pocket audiobook player. Let\'s get you set up.</string>
     <!-- Title on the onboarding welcome screen. -->
-    <string name="onboarding.welcome.title">Welcome to Voice!</string>
+    <string name="onboarding.welcome.title">Welcome to bVoice!</string>
     <!-- Label for the playback action that skips forward. -->
     <string name="playback.action.fast_forward">Fast forward</string>
     <!-- Content description for a playback button that pauses audio. -->
@@ -196,7 +198,7 @@
     <!-- Message for the dialog asking happy users to rate the app. -->
     <string name="review.request.message" tools:ignore="UnusedResources">Your feedback matters to us! If you have a moment, rate us and share your experience. It helps us to make improvements and offer a better listening experience.</string>
     <!-- Title for the dialog asking happy users to rate the app. -->
-    <string name="review.request.title" tools:ignore="UnusedResources">Enjoying Voice?</string>
+    <string name="review.request.title" tools:ignore="UnusedResources">Enjoying bVoice?</string>
     <!-- Settings about row showing the app version. -->
     <string name="settings.about.app_version.title">App version</string>
     <!-- Title and content description for opening settings. -->
@@ -212,8 +214,8 @@
     <string name="settings.appearance.color_scheme.dynamic">Dynamic color</string>
     <!-- Description for Android dynamic color. -->
     <string name="settings.appearance.color_scheme.dynamic.summary">Uses colors from your wallpaper and system theme.</string>
-    <!-- Label for selecting Voice blue as app color scheme. -->
-    <string name="settings.appearance.color_scheme.voice_blue">Voice blue</string>
+    <!-- Label for selecting bVoice blue as app color scheme. -->
+    <string name="settings.appearance.color_scheme.voice_blue">bVoice blue</string>
     <!-- Label for forcing dark mode. -->
     <string name="settings.appearance.theme.dark">Dark</string>
     <!-- Label for following the system light or dark setting. -->
@@ -243,11 +245,11 @@
     <!-- Settings support row for getting help. -->
     <string name="settings.support.get_support.title">Get help</string>
     <!-- Settings support row for helping translate the app. -->
-    <string name="settings.support.help_translating.title">Help translating Voice</string>
+    <string name="settings.support.help_translating.title">Help translating bVoice</string>
     <!-- Settings support row for reporting a problem. -->
     <string name="settings.support.report_issue.title">Report a problem</string>
     <!-- Settings row description for opening the donation/support screen. -->
-    <string name="settings.support.support_voice.summary">Donations help keep Voice maintained</string>
+    <string name="settings.support.support_voice.summary">Donations help keep bVoice maintained</string>
     <!-- Settings row for opening the donation/support screen. -->
     <string name="settings.support.support_voice.title">Support development</string>
     <!-- Settings support row for suggesting a product idea. -->
@@ -255,7 +257,7 @@
     <!-- Support screen action for donating through Ko-fi. -->
     <string name="support.action.donate_kofi">Donate on Ko-fi</string>
     <!-- Support screen text explaining why support is useful. -->
-    <string name="support.description.maintenance">Voice is free, open source, and maintained by one developer.</string>
+    <string name="support.description.maintenance">bVoice is free, open source, and maintained by one developer.</string>
     <!-- Support screen text under the main description. -->
     <string name="support.description.maintenance_subtitle">Donations help fund ongoing maintenance and development.</string>
     <!-- Support screen heading above the list of what donations enable. -->
@@ -264,8 +266,8 @@
     <string name="support.helps.maintenance">Bug fixes and maintenance</string>
     <!-- Support screen list item: new features. -->
     <string name="support.helps.features">New features</string>
-    <!-- Support screen list item: keeping Voice free, open source, and ad-free. -->
-    <string name="support.helps.open_source">Keeping Voice ad-free</string>
+    <!-- Support screen list item: keeping bVoice free, open source, and ad-free. -->
+    <string name="support.helps.open_source">Keeping bVoice ad-free</string>
     <!-- Title of the support screen. -->
     <string name="support.title">Support development</string>
     <!-- Short label for the launcher shortcut that plays the current book. -->
@@ -280,4 +282,79 @@
     <string name="sleep_timer.dialog.title">Sweet dreams! 🌙</string>
     <!-- Sleep timer option and playback status for stopping at the end of a chapter. -->
     <string name="sleep_timer.end_of_chapter">End of Chapter</string>
+    <!-- Server books: choosing audiobooks from the bVoice content server for this phone. -->
+    <string name="server_books.title">Server books</string>
+    <string name="server_books.summary">Choose audiobooks from the server to keep on this phone</string>
+    <string name="server_books.action.sync">Sync</string>
+    <string name="server_books.action.stop">Stop</string>
+    <string name="server_books.action.refresh">Refresh</string>
+    <string name="server_books.action.server">Server settings</string>
+    <string name="server_books.status.on_device">On this phone</string>
+    <string name="server_books.status.partial">Partly on this phone</string>
+    <string name="server_books.detail">%1$.1f h · %2$.0f MB · %3$s</string>
+    <plurals name="server_books.parts">
+        <item quantity="one">%d part</item>
+        <item quantity="other">%d parts</item>
+    </plurals>
+    <string name="server_books.loading">Loading the catalogue…</string>
+    <string name="server_books.empty">The server offers no audiobooks yet.</string>
+    <string name="server_books.error">Could not load the catalogue: %1$s</string>
+    <string name="server_books.sync.running">Syncing: %1$d/%2$d</string>
+    <string name="server_books.sync.finished">Synced. Fetched: %1$d, removed: %2$d</string>
+    <plurals name="server_books.sync.discarded">
+        <item quantity="one">%d file did not match the server and will be fetched again</item>
+        <item quantity="other">%d files did not match the server and will be fetched again</item>
+    </plurals>
+    <string name="server_books.sync.kept">The book that is playing was kept</string>
+    <plurals name="server_books.sync.logs_sent">
+        <item quantity="one">Listening log: %d day sent</item>
+        <item quantity="other">Listening log: %d days sent</item>
+    </plurals>
+    <string name="server_books.sync.logs_failed">Listening log not sent: %1$s</string>
+    <string name="server_books.sync.failed">Sync stopped: %1$s</string>
+    <string name="server_books.dialog.url">Server address</string>
+    <string name="server_books.dialog.token">API key</string>
+    <string name="server_books.dialog.saved">Saved on this phone, and kept when the app is updated.</string>
+    <string name="server_books.dialog.save">Save</string>
+    <string name="server_books.dialog.device">Device name</string>
+    <string name="server_books.dialog.device_hint">Names this phone\'s listening logs on the server</string>
+    <!-- Pillow speaker: auto-play when a paired Bluetooth speaker connects, disconnect it after a pause. -->
+    <string name="pillow_speaker.title">Pillow speaker</string>
+    <string name="pillow_speaker.summary">Play when it connects, disconnect it after a pause</string>
+    <string name="pillow_speaker.needs_android_12">The pillow speaker needs Android 12 or newer.</string>
+    <string name="pillow_speaker.none">No speaker chosen</string>
+    <string name="pillow_speaker.choose">Choose</string>
+    <string name="pillow_speaker.choose_title">Which is the pillow speaker?</string>
+    <string name="pillow_speaker.no_paired">No paired devices. Pair the speaker in Android\'s Bluetooth settings first.</string>
+    <string name="pillow_speaker.forget">Forget</string>
+    <string name="pillow_speaker.connected">Media connected</string>
+    <string name="pillow_speaker.not_connected">Media not connected</string>
+    <string name="pillow_speaker.permission_title">Bluetooth access is not allowed</string>
+    <string name="pillow_speaker.permission_summary">Without it the speaker is neither noticed nor disconnected, and nothing says so.</string>
+    <string name="pillow_speaker.permission_allow">Allow</string>
+    <string name="pillow_speaker.auto_play">Play when it connects</string>
+    <string name="pillow_speaker.auto_play_summary">Starts the current book whenever the speaker connects</string>
+    <string name="pillow_speaker.force_stop_note">If bVoice has been force-stopped (App info → Force stop), Android will not wake it when the speaker connects, and nothing plays. An automation that opens bVoice when the speaker connects covers that case — for example a Bixby Routine on Samsung (If: Bluetooth device connected → Then: open bVoice), MacroDroid, or Tasker. If you have set one up, this is the reminder that it is there.</string>
+    <string name="pillow_speaker.disconnect">Disconnect after a pause</string>
+    <string name="pillow_speaker.disconnect_note">Only the media connection is dropped. If the speaker also connects for calls, it stays "connected for calls" and will not switch itself off: turn off Phone calls for it in Android\'s Bluetooth settings (the cog next to the device).</string>
+    <plurals name="pillow_speaker.disconnect_summary">
+        <item quantity="one">After %d minute paused, so the speaker can switch itself off</item>
+        <item quantity="other">After %d minutes paused, so the speaker can switch itself off</item>
+    </plurals>
+    <string name="pillow_speaker.test_summary">Test: disconnect the speaker now, then watch whether it reconnects by itself.</string>
+    <string name="pillow_speaker.disconnect_now">Disconnect now</string>
+    <string name="pillow_speaker.check">Check</string>
+    <string name="pillow_speaker.checking">Checking…</string>
+    <string name="pillow_speaker.disconnect_in">Disconnects in %1$s (at %2$s)</string>
+    <string name="pillow_speaker.disconnect_none">No disconnect pending</string>
+    <string name="pillow_speaker.disconnect_off">Disconnect after a pause is off</string>
+    <string name="pillow_speaker.tap_tester">Tap tester</string>
+    <string name="pillow_speaker.tap_spacing">Tap spacing</string>
+    <string name="pillow_speaker.tap_spacing_off">Off: every tap is an ordinary jump</string>
+    <string name="pillow_speaker.tap_spacing_summary">Back or forward taps within %1$d ms of each other jump further: two ordinary jumps, then 1, 2, 5, 10 minutes</string>
+    <string name="pillow_speaker.tap_tester_clear">Clear</string>
+    <string name="pillow_speaker.tap_tester_empty">Press the speaker\'s buttons: each key it sends shows here, with the tap count and the jump.</string>
+    <string name="pillow_speaker.result_disconnected">Disconnected</string>
+    <string name="pillow_speaker.result_unavailable">This Android release does not allow it: %1$s</string>
+    <string name="pillow_speaker.result_failed">Could not disconnect: %1$s</string>
 </resources>

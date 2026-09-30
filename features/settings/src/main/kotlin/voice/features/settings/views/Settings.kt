@@ -108,6 +108,38 @@ private fun Settings(
         }
       }
       item {
+        ListItem(
+          modifier = Modifier.clickable { listener.openServerBooks() },
+          leadingContent = {
+            Icon(
+              imageVector = VoiceIcons.Download,
+              contentDescription = stringResource(StringsR.string.server_books_title),
+            )
+          },
+          supportingContent = {
+            Text(stringResource(StringsR.string.server_books_summary))
+          },
+        ) {
+          Text(stringResource(StringsR.string.server_books_title))
+        }
+      }
+      item {
+        ListItem(
+          modifier = Modifier.clickable { listener.openPillowSpeaker() },
+          leadingContent = {
+            Icon(
+              imageVector = VoiceIcons.Bedtime,
+              contentDescription = stringResource(StringsR.string.pillow_speaker_title),
+            )
+          },
+          supportingContent = {
+            Text(stringResource(StringsR.string.pillow_speaker_summary))
+          },
+        ) {
+          Text(stringResource(StringsR.string.pillow_speaker_title))
+        }
+      }
+      item {
         ThemeModeRow(viewState.themeMode, listener::onThemeModeRowClick)
       }
       if (viewState.showThemeColorSchemePref) {

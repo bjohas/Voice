@@ -184,26 +184,42 @@ class VoicePlayer(
 
   override fun seekForward() {
     scope.launch {
-      val skipAmount = seekTimeStore.data.first().seconds
-
-      val currentPosition = player.currentPosition.takeUnless { it == C.TIME_UNSET }
-        ?.milliseconds
-        ?.coerceAtLeast(ZERO)
-        ?: return@launch
-      val newPosition = currentPosition + skipAmount
-
-      val duration = player.duration.takeUnless { it == C.TIME_UNSET }
-        ?.milliseconds
-        ?: return@launch
-
-      if (newPosition > duration) {
-        val nextMediaItemIndex = nextMediaItemIndex.takeUnless { it == C.INDEX_UNSET }
-          ?: return@launch
-        player.seekTo(nextMediaItemIndex, (duration - newPosition).absoluteValue.inWholeMilliseconds)
-      } else {
-        player.seekTo(newPosition.inWholeMilliseconds)
-      }
+      seekForwardBy(seekTimeStore.data.first().seconds)
     }
+  }
+
+  /** A jump of any size, for the extra taps of a button gesture (TapGesture). */
+  fun seekBy(
+    amount: Duration,
+    forward: Boolean,
+  ) {
+    scope.launch {
+      if (forward) seekForwardBy(amount) else seekBackBy(amount)
+    }
+  }
+
+  /**
+   * Forward by [skipAmount], crossing as many chapters as it takes, as
+   * [seekBackBy] does backwards. A jump past the end of the book does nothing.
+   */
+  private fun seekForwardBy(skipAmount: Duration) {
+    var index = player.currentMediaItemIndex.takeUnless { it == C.INDEX_UNSET } ?: return
+    var position = player.currentPosition.takeUnless { it == C.TIME_UNSET }
+      ?.milliseconds
+      ?.coerceAtLeast(ZERO)
+      ?: return
+    var duration = player.duration.takeUnless { it == C.TIME_UNSET }?.milliseconds ?: return
+    var remaining = skipAmount
+
+    while (position + remaining > duration) {
+      remaining -= duration - position
+      index++
+      if (index >= player.mediaItemCount) return
+      position = ZERO
+      duration = player.getMediaItemAt(index).mediaMetadata.durationMs?.milliseconds ?: return
+    }
+
+    player.seekTo(index, (position + remaining).inWholeMilliseconds)
   }
 
   override fun play() {

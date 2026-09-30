@@ -11,6 +11,7 @@ import dev.zacsweers.metro.ContributesTo
 import dev.zacsweers.metro.Provides
 import dev.zacsweers.metro.SingleIn
 import kotlinx.serialization.builtins.MapSerializer
+import kotlinx.serialization.builtins.SetSerializer
 import kotlinx.serialization.builtins.nullable
 import kotlinx.serialization.builtins.serializer
 import voice.core.data.BookId
@@ -18,6 +19,8 @@ import voice.core.data.GridMode
 import voice.core.data.ThemeColorScheme
 import voice.core.data.ThemeMode
 import voice.core.data.sleeptimer.SleepTimerPreference
+import voice.core.data.speaker.SpeakerSettings
+import voice.core.data.sync.ServerConfig
 import voice.core.featureflag.FeatureFlagOverride
 import java.io.File
 import kotlin.time.Duration
@@ -146,6 +149,39 @@ public interface StoreModule {
   @OnboardingCompletedStore
   private fun onboardingCompleted(factory: VoiceDataStoreFactory): DataStore<Boolean> {
     return factory.boolean("onboardingCompleted", defaultValue = false)
+  }
+
+  @Provides
+  @SingleIn(AppScope::class)
+  @SpeakerSettingsStore
+  private fun speakerSettings(factory: VoiceDataStoreFactory): DataStore<SpeakerSettings> {
+    return factory.create(
+      serializer = SpeakerSettings.serializer(),
+      fileName = "speakerSettings",
+      defaultValue = SpeakerSettings(),
+    )
+  }
+
+  @Provides
+  @SingleIn(AppScope::class)
+  @ServerConfigStore
+  private fun serverConfig(factory: VoiceDataStoreFactory): DataStore<ServerConfig> {
+    return factory.create(
+      serializer = ServerConfig.serializer(),
+      fileName = "serverConfig",
+      defaultValue = ServerConfig(),
+    )
+  }
+
+  @Provides
+  @SingleIn(AppScope::class)
+  @ServerSelectionStore
+  private fun serverSelection(factory: VoiceDataStoreFactory): DataStore<Set<String>> {
+    return factory.create(
+      serializer = SetSerializer(String.serializer()),
+      fileName = "serverSelection",
+      defaultValue = emptySet(),
+    )
   }
 
   @Provides

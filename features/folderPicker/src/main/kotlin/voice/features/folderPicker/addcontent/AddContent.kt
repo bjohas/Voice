@@ -44,6 +44,7 @@ fun AddContent(origin: Origin) {
     onAdd = { folderType, uri ->
       viewModel.add(uri, folderType)
     },
+    onServer = viewModel::addServer,
   )
 }
 

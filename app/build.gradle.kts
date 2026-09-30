@@ -30,7 +30,7 @@ android {
   }
 
   defaultConfig {
-    applicationId = "de.ph1b.audiobook"
+    applicationId = "net.opendeved.bVoice"
     versionName = providers.gradleProperty("voice.versionName").orNull ?: "1.0.0"
     versionCode = providers.gradleProperty("voice.versionCode").orNull?.toInt() ?: Int.MAX_VALUE
 
@@ -170,6 +170,11 @@ dependencies {
   implementation(projects.features.sleepTimer)
   implementation(projects.features.settings)
   implementation(projects.features.folderPicker)
+  implementation(projects.features.serverBooks)
+  implementation(projects.core.sync)
+  implementation(projects.features.pillowSpeaker)
+  implementation(projects.core.speaker)
+  implementation(projects.core.listeninglog)
   implementation(projects.features.bookOverview)
   implementation(projects.core.search)
   implementation(projects.features.cover)

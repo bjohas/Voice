@@ -215,6 +215,14 @@ class SettingsViewModel(
     navigator.goTo(Destination.FolderPicker)
   }
 
+  override fun openServerBooks() {
+    navigator.goTo(Destination.ServerBooks)
+  }
+
+  override fun openPillowSpeaker() {
+    navigator.goTo(Destination.PillowSpeaker)
+  }
+
   override fun setAutoSleepTimer(checked: Boolean) {
     mainScope.launch {
       sleepTimerPreferenceStore.updateData { currentPrefs ->

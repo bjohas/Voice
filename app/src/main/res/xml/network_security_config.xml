@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The book server is plain HTTP, reachable only over the mesh VPN, whose hosts
+  are named *.nord. Everything else keeps the platform default: HTTPS only.
+-->
+<network-security-config>
+  <domain-config cleartextTrafficPermitted="true">
+    <domain includeSubdomains="true">nord</domain>
+  </domain-config>
+</network-security-config>
