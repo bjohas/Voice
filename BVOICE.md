@@ -46,10 +46,18 @@ quick is the **Tap spacing** setting (400 ms; 0 turns it off). On-screen and
 notification buttons are unchanged. Forward jumps now cross several chapters,
 as backward ones already did. Code: `TapGesture`, `LibrarySessionCallback`.
 
-**A listening log.** One tab-separated line per start and stop — local time
-with offset, book, position — in one text file per day
-(`Android/data/net.opendeved.bVoice/files/listening-log/`), uploaded to the
+**A listening log — deliberately very basic.** One tab-separated line per
+start and stop — local time with offset, book, position — in one text file per
+day (`Android/data/net.opendeved.bVoice/files/listening-log/`), uploaded to the
 server after each sync. Code: `:core:listeninglog`.
+
+Voice's author plans a listening log of his own: see the discussion on the
+closed [PR #3503 "Feature/audiolog"](https://github.com/PaulWoitaschek/Voice/pull/3503),
+where he describes it as a timeline or a joined bookmarks/audio-log screen,
+recorded as typed events in the app's database. **When that arrives upstream,
+bVoice will adopt it** and keep only what the server needs on top — the daily
+file and its upload — fed from upstream's events. Until then, bVoice offers
+this basic log.
 
 For now the log also carries **temporary diagnostic lines**, used to get the
 speaker behaviour right: `TAP` (each back/forward tap from a speaker — its
