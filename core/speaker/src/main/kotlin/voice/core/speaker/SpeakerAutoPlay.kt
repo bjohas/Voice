@@ -50,9 +50,10 @@ public class SpeakerAutoPlay(
   public fun onSpeakerConnected(
     address: String?,
     why: String = "connected",
+    associationId: Int? = null,
   ) {
     job?.cancel()
-    job = scope.launch { connect(address, why) }
+    job = scope.launch { connect(address, why, associationId) }
   }
 
   /**
@@ -66,7 +67,7 @@ public class SpeakerAutoPlay(
     scope.launch {
       val settings = settingsStore.data.first()
       val address = settings.address ?: return@launch
-      if (!settings.autoPlay || processAgeMillis > FRESH_START_MS) return@launch
+      if (!settings.enabled || !settings.autoPlay || processAgeMillis > FRESH_START_MS) return@launch
       if (playStateManager.playState == PlayStateManager.PlayState.Playing) return@launch
       if (link.isConnected(address)) {
         onSpeakerConnected(address, "fresh start with media already connected")
@@ -77,13 +78,16 @@ public class SpeakerAutoPlay(
   private suspend fun connect(
     address: String?,
     why: String,
+    associationId: Int?,
   ) {
     val settings = settingsStore.data.first()
     val target = settings.address
-    if (!shouldAutoPlay(settings, address, clock.millis()) || target == null) {
+    if (!shouldAutoPlay(settings, address, clock.millis(), associationId) || target == null) {
       val reason = when {
+        !settings.enabled -> "the pillow speaker is switched off"
         !settings.autoPlay -> "auto-play is off"
         target == null -> "no speaker chosen"
+        associationId != null && associationId != settings.associationId -> "another companion device"
         address != null && !address.equals(target, ignoreCase = true) -> "another device"
         else -> "just disconnected by bVoice"
       }
@@ -100,6 +104,8 @@ public class SpeakerAutoPlay(
       },
     )
     delay(ROUTE_SETTLE_MS)
+    // Switched off while waiting for the speaker's media: nothing to play.
+    if (!stillWanted()) return
     Logger.i("Pillow speaker: playing")
     logNotes.note("SPEAKER", "$why: playing")
     playerController.play()
@@ -115,9 +121,15 @@ public class SpeakerAutoPlay(
         playStateManager.playStateFlow.first { it == PlayStateManager.PlayState.Paused }
       }
       if (stopped == null) return
+      if (playStateManager.pausedOnRequest) {
+        // Paused on purpose -- the speaker's button, the app -- not by the route changing.
+        logNotes.note("SPEAKER", "$why: paused on request within ${STOPPED_WITHIN_MS}ms, not retrying")
+        return
+      }
       logNotes.note("SPEAKER", "$why: stopped within ${STOPPED_WITHIN_MS}ms, retrying")
     }
     delay(RETRY_AFTER_MS)
+    if (!stillWanted()) return
     if (link.isConnected(target)) {
       logNotes.note("SPEAKER", "$why: playing again")
       playerController.play()
@@ -125,6 +137,8 @@ public class SpeakerAutoPlay(
       logNotes.note("SPEAKER", "$why: media gone, not retrying")
     }
   }
+
+  private suspend fun stillWanted(): Boolean = settingsStore.data.first().let { it.enabled && it.autoPlay }
 
   internal companion object {
     val ownDisconnectGrace = 2.minutes
@@ -154,8 +168,11 @@ public class SpeakerAutoPlay(
       settings: SpeakerSettings,
       address: String?,
       nowMillis: Long,
+      associationId: Int? = null,
     ): Boolean {
-      if (!settings.autoPlay || settings.address == null) return false
+      if (!settings.enabled || !settings.autoPlay || settings.address == null) return false
+      // Android 16 names the device by its association: it must be the speaker's.
+      if (associationId != null && associationId != settings.associationId) return false
       if (address != null && !address.equals(settings.address, ignoreCase = true)) return false
       return nowMillis - settings.lastOwnDisconnectMillis > ownDisconnectGrace.inWholeMilliseconds
     }

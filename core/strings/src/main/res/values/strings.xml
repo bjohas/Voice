@@ -214,8 +214,10 @@
     <string name="settings.appearance.color_scheme.dynamic">Dynamic color</string>
     <!-- Description for Android dynamic color. -->
     <string name="settings.appearance.color_scheme.dynamic.summary">Uses colors from your wallpaper and system theme.</string>
-    <!-- Label for selecting bVoice blue as app color scheme. -->
-    <string name="settings.appearance.color_scheme.voice_blue">bVoice blue</string>
+    <!-- Label for selecting bVoice's orange as app color scheme, the default. -->
+    <string name="settings.appearance.color_scheme.bvoice_orange">bVoice orange</string>
+    <!-- Label for selecting Voice blue as app color scheme. -->
+    <string name="settings.appearance.color_scheme.voice_blue">Voice blue</string>
     <!-- Label for forcing dark mode. -->
     <string name="settings.appearance.theme.dark">Dark</string>
     <!-- Label for following the system light or dark setting. -->
@@ -240,20 +242,11 @@
     <string name="settings.playback.auto_rewind.title">Auto rewind</string>
     <!-- Title for the setting that controls skip-forward and rewind duration. -->
     <string name="settings.playback.seek_time.title">Skip amount</string>
-    <!-- Settings support row for opening the FAQ. -->
-    <string name="settings.support.faq.title">FAQ</string>
-    <!-- Settings support row for getting help. -->
-    <string name="settings.support.get_support.title">Get help</string>
-    <!-- Settings support row for helping translate the app. -->
-    <string name="settings.support.help_translating.title">Help translating bVoice</string>
     <!-- Settings support row for reporting a problem. -->
     <string name="settings.support.report_issue.title">Report a problem</string>
-    <!-- Settings row description for opening the donation/support screen. -->
-    <string name="settings.support.support_voice.summary">Donations help keep bVoice maintained</string>
-    <!-- Settings row for opening the donation/support screen. -->
-    <string name="settings.support.support_voice.title">Support development</string>
-    <!-- Settings support row for suggesting a product idea. -->
-    <string name="settings.support.suggest_idea.title">Suggest an idea</string>
+    <string name="settings.about_voice.title">Built on Voice</string>
+    <string name="settings.about_voice.summary">bVoice is Voice, the free, open-source audiobook player by Paul Woitaschek, with a few additions. Get Voice itself on Google Play or F-Droid: voice.woitaschek.de</string>
+    <string name="settings.support.report_issue.summary">Opens a new issue on bVoice\'s GitHub</string>
     <!-- Support screen action for donating through Ko-fi. -->
     <string name="support.action.donate_kofi">Donate on Ko-fi</string>
     <!-- Support screen text explaining why support is useful. -->
@@ -292,6 +285,17 @@
     <string name="server_books.status.on_device">On this phone</string>
     <string name="server_books.status.partial">Partly on this phone</string>
     <string name="server_books.detail">%1$.1f h · %2$.0f MB · %3$s</string>
+    <plurals name="server_books.refreshed">
+        <item quantity="one">Refreshed: %d book on the server</item>
+        <item quantity="other">Refreshed: %d books on the server</item>
+    </plurals>
+    <string name="server_books.refresh_failed">Could not refresh: %1$s</string>
+    <plurals name="tags.refreshed">
+        <item quantity="one">Refreshed: %d tag from the server</item>
+        <item quantity="other">Refreshed: %d tags from the server</item>
+    </plurals>
+    <string name="tags.refresh_failed">Could not reach the server</string>
+    <string name="tags.refresh_no_server">The server is off or not set up: tags are all on this phone</string>
     <plurals name="server_books.parts">
         <item quantity="one">%d part</item>
         <item quantity="other">%d parts</item>
@@ -318,6 +322,62 @@
     <string name="server_books.dialog.save">Save</string>
     <string name="server_books.dialog.device">Device name</string>
     <string name="server_books.dialog.device_hint">Names this phone\'s listening logs on the server</string>
+    <!-- NFC tags: Tonies and other tags as keys to server books (NFC-TAGS.md). -->
+    <string name="tags.title">Tags</string>
+    <string name="server_setup.title">Set up the server</string>
+    <string name="server_setup.message">Use the server at %1$s? This replaces the server address and key saved on this phone.</string>
+    <string name="server_setup.use">Use this server</string>
+    <string name="server_setup.done">Server set up</string>
+    <string name="server_setup.already">This server is already set up</string>
+    <string name="server_setup.bad_link">Not a bVoice setup link</string>
+    <string name="server_books.use">Use the server</string>
+    <string name="server_books.off_explain">Off: nothing is fetched from the server or sent to it. Tags and books on this phone still work.</string>
+    <string name="pillow_speaker.use">Use the pillow speaker</string>
+    <string name="pillow_speaker.off_explain">Off: no playing when it connects, no disconnecting after a pause, no tap gestures.</string>
+    <string name="tags.use">Read tags</string>
+    <string name="tags.off_explain">Off: the phone does not read tags at all.</string>
+    <string name="server_books.not_set_up">Not set up yet: add the server\'s address here</string>
+    <string name="tags.summary">Tonies and other NFC tags that start a book</string>
+    <string name="tags.explain">Hold a tag to the phone: on this page it shows here instead of playing. Give it a name and choose its book. Anywhere else in bVoice, a tag with a book plays it; an unknown Tonie does nothing, and any other unknown tag offers to set it up.</string>
+    <string name="tags.server">Server</string>
+    <string name="tags.server_on">The server is on (%1$s).</string>
+    <string name="tags.server_explain">A server book chosen here is saved on the server, and shows on its tags page; books can be chosen there too. A book only this phone has stays on this phone and wins over the server\'s book for the tag: it is marked override.</string>
+    <string name="tags.server_off">The server is switched off: names and books are kept on this phone.</string>
+    <string name="tags.server_not_set_up">No server is set up: names and books are kept on this phone.</string>
+    <string name="tags.no_nfc">This phone has no NFC, or it is switched off.</string>
+    <string name="tags.last_scan">Just read</string>
+    <string name="tags.none_yet">No tag read yet: hold one to the back of the phone.</string>
+    <string name="tags.probably_tonie">probably a Tonie</string>
+    <string name="tags.known_as">Known as: %1$s</string>
+    <string name="tags.unknown">Not known yet</string>
+    <string name="tags.name">Name</string>
+    <string name="tags.send">Send to server</string>
+    <string name="tags.save">Save</string>
+    <string name="tags.choose_book">Choose a book</string>
+    <string name="tags.change_book">Change book</string>
+    <string name="tags.remove_book">Remove book</string>
+    <string name="tags.book">Book: %1$s</string>
+    <string name="tags.source_server">server</string>
+    <string name="tags.source_phone">phone</string>
+    <string name="tags.source_override">override</string>
+    <string name="tags.overrides">instead of the server\'s: %1$s</string>
+    <string name="tags.search">Search</string>
+    <string name="tags.not_on_phone_yet">not on the phone yet</string>
+    <string name="tags.choose_failed">Could not change it: %1$s</string>
+    <string name="tags.sent">Saved. Now choose its book.</string>
+    <string name="tags.known">Tags</string>
+    <string name="tags.refresh">Refresh</string>
+    <string name="tags.no_book">No book yet</string>
+    <string name="tags.from_start">from the beginning</string>
+    <string name="tags.empty">No tags yet.</string>
+    <string name="tags.toast_playing">▶ %1$s</string>
+    <string name="tags.toast_no_book">%1$s: no book yet — choose one in Settings → Tags</string>
+    <string name="tags.toast_not_on_phone">%1$s: the book is not on this phone</string>
+    <string name="tags.toast_fetching">%1$s: fetching the book…</string>
+    <string name="tags.toast_fetch_failed">%1$s: could not fetch the book</string>
+    <string name="tags.prompt_title">Unknown tag</string>
+    <string name="tags.prompt_message">This tag (%1$s) is not set up yet. Name it and choose its book in Settings → Tags.</string>
+    <string name="tags.prompt_set_up">Set up</string>
     <!-- Pillow speaker: auto-play when a paired Bluetooth speaker connects, disconnect it after a pause. -->
     <string name="pillow_speaker.title">Pillow speaker</string>
     <string name="pillow_speaker.summary">Play when it connects, disconnect it after a pause</string>

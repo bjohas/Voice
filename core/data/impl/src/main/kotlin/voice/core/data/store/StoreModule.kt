@@ -7,6 +7,7 @@ import androidx.core.content.edit
 import androidx.datastore.core.DataMigration
 import androidx.datastore.core.DataStore
 import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.BindingContainer
 import dev.zacsweers.metro.ContributesTo
 import dev.zacsweers.metro.Provides
 import dev.zacsweers.metro.SingleIn
@@ -20,14 +21,17 @@ import voice.core.data.ThemeColorScheme
 import voice.core.data.ThemeMode
 import voice.core.data.sleeptimer.SleepTimerPreference
 import voice.core.data.speaker.SpeakerSettings
+import voice.core.data.sync.LocalTagEntry
 import voice.core.data.sync.ServerConfig
+import voice.core.data.sync.TagEntry
 import voice.core.featureflag.FeatureFlagOverride
 import java.io.File
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
+@BindingContainer
 @ContributesTo(AppScope::class)
-public interface StoreModule {
+public object StoreModule {
 
   @Provides
   @SingleIn(AppScope::class)
@@ -63,7 +67,7 @@ public interface StoreModule {
     return factory.create(
       serializer = ThemeColorScheme.serializer(),
       fileName = "themeColorScheme",
-      defaultValue = ThemeColorScheme.VoiceBlue,
+      defaultValue = ThemeColorScheme.BVoiceOrange,
     )
   }
 
@@ -149,6 +153,35 @@ public interface StoreModule {
   @OnboardingCompletedStore
   private fun onboardingCompleted(factory: VoiceDataStoreFactory): DataStore<Boolean> {
     return factory.boolean("onboardingCompleted", defaultValue = false)
+  }
+
+  @Provides
+  @SingleIn(AppScope::class)
+  @TagMapStore
+  private fun tagMap(factory: VoiceDataStoreFactory): DataStore<Map<String, TagEntry>> {
+    return factory.create(
+      serializer = MapSerializer(String.serializer(), TagEntry.serializer()),
+      fileName = "tagMap",
+      defaultValue = emptyMap(),
+    )
+  }
+
+  @Provides
+  @SingleIn(AppScope::class)
+  @TagsEnabledStore
+  private fun tagsEnabled(factory: VoiceDataStoreFactory): DataStore<Boolean> {
+    return factory.boolean("tagsEnabled", defaultValue = true)
+  }
+
+  @Provides
+  @SingleIn(AppScope::class)
+  @LocalTagMapStore
+  private fun localTagMap(factory: VoiceDataStoreFactory): DataStore<Map<String, LocalTagEntry>> {
+    return factory.create(
+      serializer = MapSerializer(String.serializer(), LocalTagEntry.serializer()),
+      fileName = "localTagMap",
+      defaultValue = emptyMap(),
+    )
   }
 
   @Provides

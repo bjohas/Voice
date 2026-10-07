@@ -11,6 +11,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.updateAndGet
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
@@ -20,6 +21,8 @@ import voice.core.data.GridMode
 import voice.core.data.ThemeColorScheme
 import voice.core.data.ThemeMode
 import voice.core.data.sleeptimer.SleepTimerPreference
+import voice.core.data.speaker.SpeakerSettings
+import voice.core.data.sync.ServerConfig
 import voice.core.featureflag.MemoryFeatureFlag
 import voice.core.ui.DynamicColorAvailability
 import voice.core.ui.GridCount
@@ -34,7 +37,10 @@ class SettingsViewModelTest {
 
   private val scope = TestScope()
   private val themeModeStore = MemoryDataStore(ThemeMode.FollowSystem)
-  private val themeColorSchemeStore = MemoryDataStore(ThemeColorScheme.VoiceBlue)
+  private val serverConfigStore = MemoryDataStore(ServerConfig(url = "https://example.org/r/Audiobooks/"))
+  private val speakerSettingsStore = MemoryDataStore(SpeakerSettings())
+  private val tagsEnabledStore = MemoryDataStore(true)
+  private val themeColorSchemeStore = MemoryDataStore(ThemeColorScheme.BVoiceOrange)
   private val autoRewindAmountStore = MemoryDataStore(10)
   private val seekTimeStore = MemoryDataStore(30)
   private val gridModeStore = MemoryDataStore(GridMode.GRID)
@@ -72,18 +78,42 @@ class SettingsViewModelTest {
     kioskModeFeatureFlag = kioskModeFeatureFlag,
     developerMenuUnlockedStore = developerMenuUnlockedStore,
     dynamicColorAvailability = dynamicColorAvailability,
+    serverConfigStore = serverConfigStore,
+    speakerSettingsStore = speakerSettingsStore,
+    tagsEnabledStore = tagsEnabledStore,
     dispatcherProvider = DispatcherProvider(scope.coroutineContext, scope.coroutineContext, scope.coroutineContext),
   )
 
   @Test
-  fun `view state defaults to follow system and voice blue`() = scope.runTest {
+  fun `view state defaults to follow system and bVoice orange`() = scope.runTest {
     backgroundScope.launchMolecule(RecompositionMode.Immediate) {
       viewModel.viewState()
     }.test {
       awaitItem().let {
         assertEquals(expected = ThemeMode.FollowSystem, actual = it.themeMode)
-        assertEquals(expected = ThemeColorScheme.VoiceBlue, actual = it.themeColorScheme)
+        assertEquals(expected = ThemeColorScheme.BVoiceOrange, actual = it.themeColorScheme)
       }
+    }
+  }
+
+  @Test
+  fun `bVoice's features switch on and off`() = scope.runTest {
+    backgroundScope.launchMolecule(RecompositionMode.Immediate) {
+      viewModel.viewState()
+    }.test {
+      var state = awaitItem()
+      while (!state.serverSetUp) state = awaitItem()
+      assertEquals(expected = listOf(true, true, true), actual = listOf(state.serverOn, state.pillowSpeakerOn, state.tagsOn))
+
+      viewModel.toggleServer()
+      while (state.serverOn) state = awaitItem()
+      viewModel.togglePillowSpeaker()
+      while (state.pillowSpeakerOn) state = awaitItem()
+      viewModel.toggleTags()
+      while (state.tagsOn) state = awaitItem()
+      assertEquals(expected = false, actual = serverConfigStore.data.first().enabled)
+      assertEquals(expected = false, actual = speakerSettingsStore.data.first().enabled)
+      assertEquals(expected = false, actual = tagsEnabledStore.data.first())
     }
   }
 
@@ -132,7 +162,7 @@ class SettingsViewModelTest {
     backgroundScope.launchMolecule(RecompositionMode.Immediate) {
       viewModel.viewState()
     }.test {
-      assertEquals(expected = ThemeColorScheme.VoiceBlue, actual = awaitItem().themeColorScheme)
+      assertEquals(expected = ThemeColorScheme.BVoiceOrange, actual = awaitItem().themeColorScheme)
 
       viewModel.setThemeColorScheme(ThemeColorScheme.Dynamic)
 
@@ -172,15 +202,6 @@ class SettingsViewModelTest {
 
     verify(exactly = 1) {
       navigator.goTo(Destination.DeveloperSettings)
-    }
-  }
-
-  @Test
-  fun `openSupportVoice navigates to support screen`() {
-    viewModel.openSupportVoice()
-
-    verify(exactly = 1) {
-      navigator.goTo(Destination.SupportVoice)
     }
   }
 

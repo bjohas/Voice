@@ -113,7 +113,7 @@
     <string name="settings.appearance.color_scheme.title">ערכת צבעים</string>
     <string name="settings.appearance.color_scheme.dynamic">צבע דינמי</string>
     <string name="settings.appearance.color_scheme.dynamic.summary">משתמש בצבעים מהרקע ומערכת הנושא של המערכת.</string>
-    <string name="settings.appearance.color_scheme.voice_blue">כחול bVoice</string>
+    <string name="settings.appearance.color_scheme.voice_blue">כחול Voice</string>
     <string name="settings.appearance.theme.dark">כהה</string>
     <string name="settings.appearance.theme.follow_system">לפי המערכת</string>
     <string name="settings.appearance.theme.light">בהיר</string>
@@ -126,13 +126,7 @@
     <string name="settings.library.use_grid.title">תשתמש בפריסת רשת</string>
     <string name="settings.playback.auto_rewind.title">הרצה אוטומטית</string>
     <string name="settings.playback.seek_time.title">דלג כמות</string>
-    <string name="settings.support.faq.title">שאלות נפוצות</string>
-    <string name="settings.support.get_support.title">תמיכה</string>
-    <string name="settings.support.help_translating.title">עזור לתרגם את bVoice</string>
     <string name="settings.support.report_issue.title">דווח על תקלה</string>
-    <string name="settings.support.suggest_idea.title">הצע רעיון</string>
-    <string name="settings.support.support_voice.summary">תרומות עוזרות לשמור על bVoice מתוחזקת</string>
-    <string name="settings.support.support_voice.title">תמיכה בפיתוח</string>
     <string name="support.action.donate_kofi">לתרום ב-Ko-fi</string>
     <string name="support.description.maintenance">bVoice חינמית, בקוד פתוח, ומתוחזקת בידי מפתח אחד.</string>
     <string name="support.description.maintenance_subtitle">תרומות עוזרות לממן תחזוקה ופיתוח שוטפים.</string>

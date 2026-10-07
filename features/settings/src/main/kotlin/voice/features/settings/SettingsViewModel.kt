@@ -20,14 +20,19 @@ import voice.core.data.GridMode
 import voice.core.data.ThemeColorScheme
 import voice.core.data.ThemeMode
 import voice.core.data.sleeptimer.SleepTimerPreference
+import voice.core.data.speaker.SpeakerSettings
 import voice.core.data.store.AnalyticsConsentStore
 import voice.core.data.store.AutoRewindAmountStore
 import voice.core.data.store.DeveloperMenuUnlockedStore
 import voice.core.data.store.GridModeStore
 import voice.core.data.store.SeekTimeStore
+import voice.core.data.store.ServerConfigStore
 import voice.core.data.store.SleepTimerPreferenceStore
+import voice.core.data.store.SpeakerSettingsStore
+import voice.core.data.store.TagsEnabledStore
 import voice.core.data.store.ThemeColorSchemeStore
 import voice.core.data.store.ThemeModeStore
+import voice.core.data.sync.ServerConfig
 import voice.core.featureflag.FeatureFlag
 import voice.core.featureflag.KioskModeFeatureFlagQualifier
 import voice.core.ui.DynamicColorAvailability
@@ -60,6 +65,12 @@ class SettingsViewModel(
   @DeveloperMenuUnlockedStore
   private val developerMenuUnlockedStore: DataStore<Boolean>,
   private val dynamicColorAvailability: DynamicColorAvailability,
+  @ServerConfigStore
+  private val serverConfigStore: DataStore<ServerConfig>,
+  @SpeakerSettingsStore
+  private val speakerSettingsStore: DataStore<SpeakerSettings>,
+  @TagsEnabledStore
+  private val tagsEnabledStore: DataStore<Boolean>,
   dispatcherProvider: DispatcherProvider,
 ) : SettingsListener {
 
@@ -72,7 +83,7 @@ class SettingsViewModel(
   @Composable
   fun viewState(): SettingsViewState {
     val themeMode by remember { themeModeStore.data }.collectAsState(initial = ThemeMode.FollowSystem)
-    val themeColorScheme by remember { themeColorSchemeStore.data }.collectAsState(initial = ThemeColorScheme.VoiceBlue)
+    val themeColorScheme by remember { themeColorSchemeStore.data }.collectAsState(initial = ThemeColorScheme.BVoiceOrange)
     val autoRewindAmount by remember { autoRewindAmountStore.data }.collectAsState(initial = 0)
     val seekTime by remember { seekTimeStore.data }.collectAsState(initial = 0)
     val gridMode by remember { gridModeStore.data }.collectAsState(initial = GridMode.GRID)
@@ -84,6 +95,9 @@ class SettingsViewModel(
       kioskModeFeatureFlag.get()
     }
     val showDeveloperMenu by remember { developerMenuUnlockedStore.data }.collectAsState(initial = false)
+    val serverConfig by remember { serverConfigStore.data }.collectAsState(initial = ServerConfig())
+    val speakerOn by remember { speakerSettingsStore.data }.collectAsState(initial = SpeakerSettings())
+    val tagsOn by remember { tagsEnabledStore.data }.collectAsState(initial = true)
     val showThemeColorSchemePref = remember {
       dynamicColorAvailability.isSupported()
     }
@@ -110,7 +124,23 @@ class SettingsViewModel(
       showDeveloperMenu = showDeveloperMenu,
       showSupportDevelopment = appInfoProvider.supportDevelopmentIncluded,
       kioskMode = kioskMode,
+      serverOn = serverConfig.enabled,
+      serverSetUp = serverConfig.url.isNotBlank(),
+      pillowSpeakerOn = speakerOn.enabled,
+      tagsOn = tagsOn,
     )
+  }
+
+  override fun toggleServer() {
+    mainScope.launch { serverConfigStore.updateData { it.copy(enabled = !it.enabled) } }
+  }
+
+  override fun togglePillowSpeaker() {
+    mainScope.launch { speakerSettingsStore.updateData { it.copy(enabled = !it.enabled) } }
+  }
+
+  override fun toggleTags() {
+    mainScope.launch { tagsEnabledStore.updateData { !it } }
   }
 
   override fun close() {
@@ -179,36 +209,21 @@ class SettingsViewModel(
     dialog.value = null
   }
 
-  override fun getSupport() {
-    navigator.goTo(Destination.Website("https://github.com/PaulWoitaschek/Voice/discussions/categories/q-a"))
-  }
-
-  override fun suggestIdea() {
-    navigator.goTo(Destination.Website("https://github.com/PaulWoitaschek/Voice/discussions/categories/ideas"))
-  }
-
   override fun openBugReport() {
-    val url = "https://github.com/PaulWoitaschek/Voice/issues/new".toUri()
+    // bVoice's own repository: Voice's author should not get reports about a fork.
+    val url = "https://github.com/bjohas/Voice/issues/new".toUri()
       .buildUpon()
-      .appendQueryParameter("template", "bug.yml")
-      .appendQueryParameter("version", appInfoProvider.versionName)
-      .appendQueryParameter("androidversion", Build.VERSION.SDK_INT.toString())
-      .appendQueryParameter("device", Build.MODEL)
+      .appendQueryParameter(
+        "body",
+        "What happened:\n\n\nWhat I expected:\n\n\n---\nbVoice ${appInfoProvider.versionName}, " +
+          "Android ${Build.VERSION.SDK_INT}, ${Build.MODEL}",
+      )
       .toString()
     navigator.goTo(Destination.Website(url))
   }
 
-  override fun openTranslations() {
-    dismissDialog()
-    navigator.goTo(Destination.Website("https://hosted.weblate.org/engage/voice/"))
-  }
-
-  override fun openFaq() {
-    navigator.goTo(Destination.Website("https://voice.woitaschek.de/faq/"))
-  }
-
-  override fun openSupportVoice() {
-    navigator.goTo(Destination.SupportVoice)
+  override fun openVoice() {
+    navigator.goTo(Destination.Website("https://voice.woitaschek.de/"))
   }
 
   override fun openFolderPicker() {
@@ -221,6 +236,10 @@ class SettingsViewModel(
 
   override fun openPillowSpeaker() {
     navigator.goTo(Destination.PillowSpeaker)
+  }
+
+  override fun openTags() {
+    navigator.goTo(Destination.Tags)
   }
 
   override fun setAutoSleepTimer(checked: Boolean) {

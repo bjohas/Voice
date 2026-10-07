@@ -14,7 +14,7 @@ agp = "9.4.1"
 ktlint-core = "1.8.0"
 ktlint-gradlePlugin = "0.14.0"
 retrofit = "3.0.0"
-metro = "1.4.2"
+metro = "1.4.5"
 navigation3 = "1.2.0"
 androidx-lifecycle = "2.11.0"
 
@@ -93,7 +93,7 @@ compose-ui-testJunit = { module = "androidx.compose.ui:ui-test-junit4" }
 compose-ui-testManifest = { module = "androidx.compose.ui:ui-test-manifest" }
 compose-animation-graphics = { module = "androidx.compose.animation:animation-graphics" }
 compose-animation-animation = { module = "androidx.compose.animation:animation" }
-compose-material3 = { module = "androidx.compose.material3:material3", version = "1.5.0-alpha27" }
+compose-material3 = { module = "androidx.compose.material3:material3", version = "1.5.0-alpha29" }
 compose-activity = "androidx.activity:activity-compose:1.13.0"
 compose-runtime = { module = "androidx.compose.runtime:runtime" }
 navigation3-ui = { module = "androidx.navigation3:navigation3-ui", version.ref = "navigation3" }
@@ -145,6 +145,6 @@ googleServices = { id = "com.google.gms.google-services", version = "4.5.0" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-ksp = { id = "com.google.devtools.ksp", version = "2.3.11" }
+ksp = { id = "com.google.devtools.ksp", version = "2.3.12" }
 ktlint = { id = "io.github.usefulness.ktlint-gradle-plugin", version.ref = "ktlint-gradlePlugin" }
 metro = { id = "dev.zacsweers.metro", version.ref = "metro" }

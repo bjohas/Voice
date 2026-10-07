@@ -21,4 +21,6 @@ public data class SpeakerSettings(
   val lastOwnDisconnectMillis: Long = 0,
   /** Taps on the speaker's back/forward closer than this count as one gesture (BUTTON-PRESSES.md). */
   val tapSpacingMillis: Int = 400,
+  /** Switched off in Settings: no auto-play, no disconnecting, no tap gestures. */
+  val enabled: Boolean = true,
 )

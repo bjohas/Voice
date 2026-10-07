@@ -107,7 +107,7 @@
     <string name="settings.appearance.color_scheme.title">カラースキーム</string>
     <string name="settings.appearance.color_scheme.dynamic">ダイナミックカラー</string>
     <string name="settings.appearance.color_scheme.dynamic.summary">壁紙とシステムテーマの色を使用します。</string>
-    <string name="settings.appearance.color_scheme.voice_blue">bVoice ブルー</string>
+    <string name="settings.appearance.color_scheme.voice_blue">Voice ブルー</string>
     <string name="settings.appearance.theme.dark">ダーク</string>
     <string name="settings.appearance.theme.follow_system">システムに合わせる</string>
     <string name="settings.appearance.theme.light">ライト</string>
@@ -120,13 +120,7 @@
     <string name="settings.library.use_grid.title">グリッド表示の使用</string>
     <string name="settings.playback.auto_rewind.title">自動巻き戻し</string>
     <string name="settings.playback.seek_time.title">スキップ量</string>
-    <string name="settings.support.faq.title">よくある質問</string>
-    <string name="settings.support.get_support.title">サポート</string>
-    <string name="settings.support.help_translating.title">翻訳の手助け</string>
     <string name="settings.support.report_issue.title">問題の報告</string>
-    <string name="settings.support.suggest_idea.title">アイデアの提案</string>
-    <string name="settings.support.support_voice.summary">寄付はbVoiceの維持に役立ちます</string>
-    <string name="settings.support.support_voice.title">開発を支援</string>
     <string name="support.action.donate_kofi">Ko-fiで寄付</string>
     <string name="support.description.maintenance">bVoiceは無料のオープンソースで、1人の開発者が保守しています。</string>
     <string name="support.description.maintenance_subtitle">寄付は継続的な保守と開発の資金になります。</string>

@@ -25,7 +25,7 @@ val VoiceBlue = Color(0xFF003b7f)
 @Composable
 fun VoiceTheme(
   themeMode: ThemeMode = ThemeMode.FollowSystem,
-  themeColorScheme: ThemeColorScheme = ThemeColorScheme.VoiceBlue,
+  themeColorScheme: ThemeColorScheme = ThemeColorScheme.BVoiceOrange,
   content: @Composable () -> Unit,
 ) {
   val darkTheme = when (themeMode) {
@@ -45,10 +45,13 @@ fun VoiceTheme(
       themedContent()
     }
   } else {
+    val orange = themeColorScheme == ThemeColorScheme.BVoiceOrange
     DynamicMaterialExpressiveTheme(
-      primary = VoiceBlue,
-      secondary = Color(0xFF5E6F95),
+      primary = if (orange) BVoiceOrange else VoiceBlue,
+      secondary = if (orange) Color(0xFF7A5C48) else Color(0xFF5E6F95),
       isDark = darkTheme,
+      // bVoice orange: a near-black background when dark, not a brown one.
+      isAmoled = orange && darkTheme,
       style = PaletteStyle.Expressive,
       specVersion = ColorSpec.SpecVersion.SPEC_2025,
     ) {

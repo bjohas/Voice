@@ -56,3 +56,15 @@ public annotation class ServerSelectionStore
 
 @Qualifier
 public annotation class SpeakerSettingsStore
+
+/** The phone's copy of the server's NFC tag map, UID -> entry, so tags work offline. */
+@Qualifier
+public annotation class TagMapStore
+
+/** Tags this phone alone knows, UID -> entry (NFC-TAGS-LOCAL.md); never synced. */
+@Qualifier
+public annotation class LocalTagMapStore
+
+/** Tags switched on in Settings: off, the phone does not read tags at all. */
+@Qualifier
+public annotation class TagsEnabledStore

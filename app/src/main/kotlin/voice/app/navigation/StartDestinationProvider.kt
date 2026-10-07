@@ -11,6 +11,7 @@ import voice.core.data.folders.AudiobookFolders
 import voice.core.data.store.CurrentBookStore
 import voice.core.data.store.OnboardingCompletedStore
 import voice.core.playback.PlayerController
+import voice.core.sync.ServerSetupActivity
 import voice.navigation.Destination
 
 @Inject
@@ -37,6 +38,16 @@ class StartDestinationProvider(
       }
     }
 
+    // An unknown NFC tag's prompt (core:tags) asks to open Settings -> Tags.
+    if (intent.action == OPEN_TAGS) {
+      return listOf(Destination.BookOverview, Destination.Tags)
+    }
+
+    // The server was just set up from its setup page (core:sync).
+    if (intent.action == ServerSetupActivity.OPEN_SERVER_BOOKS) {
+      return listOf(Destination.BookOverview, Destination.ServerBooks)
+    }
+
     if (intent.action == "playCurrent") {
       val bookId = runBlocking { currentBookStore.data.first() }
       if (bookId != null) {
@@ -55,3 +66,5 @@ class StartDestinationProvider(
     }
   }
 }
+
+private const val OPEN_TAGS = "voice.action.OPEN_TAGS"

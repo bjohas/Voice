@@ -19,6 +19,11 @@ data class SettingsViewState(
   val showDeveloperMenu: Boolean,
   val showSupportDevelopment: Boolean,
   val kioskMode: Boolean,
+  /** bVoice's own features, each switched on or off here. */
+  val serverOn: Boolean,
+  val serverSetUp: Boolean,
+  val pillowSpeakerOn: Boolean,
+  val tagsOn: Boolean,
 ) {
 
   enum class Dialog {
@@ -32,7 +37,7 @@ data class SettingsViewState(
     fun preview(): SettingsViewState {
       return SettingsViewState(
         themeMode = ThemeMode.FollowSystem,
-        themeColorScheme = ThemeColorScheme.VoiceBlue,
+        themeColorScheme = ThemeColorScheme.BVoiceOrange,
         showThemeColorSchemePref = true,
         seekTimeInSeconds = 42,
         autoRewindInSeconds = 12,
@@ -45,6 +50,10 @@ data class SettingsViewState(
         showDeveloperMenu = true,
         showSupportDevelopment = true,
         kioskMode = false,
+        serverOn = true,
+        serverSetUp = true,
+        pillowSpeakerOn = true,
+        tagsOn = false,
       )
     }
   }

@@ -110,7 +110,7 @@
     <string name="settings.appearance.color_scheme.title">Väriteema</string>
     <string name="settings.appearance.color_scheme.dynamic">Dynaaminen väri</string>
     <string name="settings.appearance.color_scheme.dynamic.summary">Käyttää taustakuvan ja järjestelmän teeman värejä.</string>
-    <string name="settings.appearance.color_scheme.voice_blue">bVoice-sininen</string>
+    <string name="settings.appearance.color_scheme.voice_blue">Voice-sininen</string>
     <string name="settings.appearance.theme.dark">Tumma</string>
     <string name="settings.appearance.theme.follow_system">Seuraa järjestelmää</string>
     <string name="settings.appearance.theme.light">Vaalea</string>
@@ -123,13 +123,7 @@
     <string name="settings.library.use_grid.title">Käytä ruudukkoasettelua</string>
     <string name="settings.playback.auto_rewind.title">Automaattinen takaisinkelaus</string>
     <string name="settings.playback.seek_time.title">Siirtymän pituus</string>
-    <string name="settings.support.faq.title">UKK</string>
-    <string name="settings.support.get_support.title">Hanki apua</string>
-    <string name="settings.support.help_translating.title">Auta kääntämään bVoicea</string>
     <string name="settings.support.report_issue.title">Ilmoita ongelmasta</string>
-    <string name="settings.support.suggest_idea.title">Ehdota ideaa</string>
-    <string name="settings.support.support_voice.summary">Lahjoitukset auttavat bVoicen ylläpidossa</string>
-    <string name="settings.support.support_voice.title">Tue kehitystä</string>
     <string name="support.action.donate_kofi">Lahjoita Ko-fissa</string>
     <string name="support.description.maintenance">bVoice on ilmainen avoimen lähdekoodin sovellus, jota ylläpitää yksi kehittäjä.</string>
     <string name="support.description.maintenance_subtitle">Lahjoitukset auttavat rahoittamaan jatkuvaa ylläpitoa ja kehitystä.</string>

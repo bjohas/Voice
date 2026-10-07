@@ -1,6 +1,12 @@
 package voice.features.settings.views
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -13,21 +19,29 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.retain.retain
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavEntry
 import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.BindingContainer
 import dev.zacsweers.metro.ContributesTo
 import dev.zacsweers.metro.IntoSet
 import dev.zacsweers.metro.Provides
 import voice.core.common.rootGraphAs
+import voice.core.ui.BVoiceBadge
 import voice.core.ui.VoiceTheme
 import voice.core.ui.icons.VoiceIcons
 import voice.features.settings.SettingsListener
@@ -108,36 +122,36 @@ private fun Settings(
         }
       }
       item {
-        ListItem(
-          modifier = Modifier.clickable { listener.openServerBooks() },
-          leadingContent = {
-            Icon(
-              imageVector = VoiceIcons.Download,
-              contentDescription = stringResource(StringsR.string.server_books_title),
-            )
-          },
-          supportingContent = {
-            Text(stringResource(StringsR.string.server_books_summary))
-          },
-        ) {
-          Text(stringResource(StringsR.string.server_books_title))
-        }
+        FeatureRow(
+          icon = VoiceIcons.Download,
+          title = stringResource(StringsR.string.server_books_title),
+          summary = stringResource(
+            if (viewState.serverSetUp) StringsR.string.server_books_summary else StringsR.string.server_books_not_set_up,
+          ),
+          checked = viewState.serverOn,
+          onOpen = listener::openServerBooks,
+          onToggle = listener::toggleServer,
+        )
       }
       item {
-        ListItem(
-          modifier = Modifier.clickable { listener.openPillowSpeaker() },
-          leadingContent = {
-            Icon(
-              imageVector = VoiceIcons.Bedtime,
-              contentDescription = stringResource(StringsR.string.pillow_speaker_title),
-            )
-          },
-          supportingContent = {
-            Text(stringResource(StringsR.string.pillow_speaker_summary))
-          },
-        ) {
-          Text(stringResource(StringsR.string.pillow_speaker_title))
-        }
+        FeatureRow(
+          icon = VoiceIcons.Bedtime,
+          title = stringResource(StringsR.string.pillow_speaker_title),
+          summary = stringResource(StringsR.string.pillow_speaker_summary),
+          checked = viewState.pillowSpeakerOn,
+          onOpen = listener::openPillowSpeaker,
+          onToggle = listener::togglePillowSpeaker,
+        )
+      }
+      item {
+        FeatureRow(
+          icon = VoiceIcons.Tag,
+          title = stringResource(StringsR.string.tags_title),
+          summary = stringResource(StringsR.string.tags_summary),
+          checked = viewState.tagsOn,
+          onOpen = listener::openTags,
+          onToggle = listener::toggleTags,
+        )
       }
       item {
         ThemeModeRow(viewState.themeMode, listener::onThemeModeRowClick)
@@ -195,54 +209,6 @@ private fun Settings(
         AutoSleepTimerCard(viewState.autoSleepTimer, listener)
       }
 
-      if (viewState.showSupportDevelopment) {
-        item {
-          ListItem(
-            modifier = Modifier.clickable { listener.openSupportVoice() },
-            leadingContent = {
-              Icon(
-                imageVector = VoiceIcons.Favorite,
-                contentDescription = stringResource(StringsR.string.settings_support_support_voice_title),
-                tint = MaterialTheme.colorScheme.primary,
-              )
-            },
-            supportingContent = {
-              Text(stringResource(StringsR.string.settings_support_support_voice_summary))
-            },
-          ) {
-            Text(stringResource(StringsR.string.settings_support_support_voice_title))
-          }
-        }
-      }
-
-      item {
-        ListItem(
-          modifier = Modifier.clickable { listener.suggestIdea() },
-          leadingContent = {
-            Icon(
-              imageVector = VoiceIcons.Lightbulb,
-              contentDescription = stringResource(StringsR.string.settings_support_suggest_idea_title),
-            )
-          },
-        ) {
-          Text(stringResource(StringsR.string.settings_support_suggest_idea_title))
-        }
-      }
-
-      item {
-        ListItem(
-          modifier = Modifier.clickable { listener.getSupport() },
-          leadingContent = {
-            Icon(
-              imageVector = VoiceIcons.Help,
-              contentDescription = stringResource(StringsR.string.settings_support_get_support_title),
-            )
-          },
-        ) {
-          Text(stringResource(StringsR.string.settings_support_get_support_title))
-        }
-      }
-
       item {
         ListItem(
           modifier = Modifier.clickable { listener.openBugReport() },
@@ -252,34 +218,28 @@ private fun Settings(
               contentDescription = stringResource(StringsR.string.settings_support_report_issue_title),
             )
           },
+          supportingContent = {
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+              BVoiceBadge()
+              Text(stringResource(StringsR.string.settings_support_report_issue_summary), modifier = Modifier.weight(1F, fill = false))
+            }
+          },
         ) {
           Text(stringResource(StringsR.string.settings_support_report_issue_title))
         }
       }
       item {
         ListItem(
-          modifier = Modifier.clickable { listener.openTranslations() },
+          modifier = Modifier.clickable { listener.openVoice() },
           leadingContent = {
             Icon(
-              imageVector = VoiceIcons.Language,
-              contentDescription = stringResource(StringsR.string.settings_support_help_translating_title),
+              imageVector = VoiceIcons.Favorite,
+              contentDescription = stringResource(StringsR.string.settings_about_voice_title),
             )
           },
+          supportingContent = { Text(stringResource(StringsR.string.settings_about_voice_summary)) },
         ) {
-          Text(stringResource(StringsR.string.settings_support_help_translating_title))
-        }
-      }
-      item {
-        ListItem(
-          modifier = Modifier.clickable { listener.openFaq() },
-          leadingContent = {
-            Icon(
-              imageVector = VoiceIcons.Help,
-              contentDescription = stringResource(StringsR.string.settings_support_faq_title),
-            )
-          },
-        ) {
-          Text(stringResource(StringsR.string.settings_support_faq_title))
+          Text(stringResource(StringsR.string.settings_about_voice_title))
         }
       }
       item {
@@ -339,8 +299,9 @@ interface SettingsGraph {
   val settingsViewModel: SettingsViewModel
 }
 
+@BindingContainer
 @ContributesTo(AppScope::class)
-interface SettingsProvider {
+object SettingsProvider {
 
   @Provides
   @IntoSet
@@ -404,5 +365,44 @@ private fun Dialog(
         onDismiss = listener::dismissDialog,
       )
     }
+  }
+}
+
+/**
+ * One of bVoice's own features: the left part opens its page, the switch on
+ * the right turns it on or off.
+ */
+@Composable
+private fun FeatureRow(
+  icon: ImageVector,
+  title: String,
+  summary: String,
+  checked: Boolean,
+  onOpen: () -> Unit,
+  onToggle: () -> Unit,
+) {
+  Row(
+    modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min),
+    verticalAlignment = Alignment.CenterVertically,
+  ) {
+    ListItem(
+      modifier = Modifier.weight(1F).clickable(onClick = onOpen),
+      leadingContent = { Icon(imageVector = icon, contentDescription = null) },
+      supportingContent = {
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+          BVoiceBadge()
+          Text(summary, modifier = Modifier.weight(1F, fill = false))
+        }
+      },
+    ) {
+      Text(title)
+    }
+    VerticalDivider(Modifier.padding(vertical = 16.dp))
+    Switch(
+      checked = checked,
+      onCheckedChange = { onToggle() },
+      // Three of these in a row: say which feature each one is.
+      modifier = Modifier.padding(horizontal = 16.dp).semantics { contentDescription = title },
+    )
   }
 }

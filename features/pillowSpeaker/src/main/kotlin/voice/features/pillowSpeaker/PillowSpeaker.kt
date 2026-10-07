@@ -35,6 +35,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberSliderState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -52,6 +53,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavEntry
 import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.BindingContainer
 import dev.zacsweers.metro.ContributesTo
 import dev.zacsweers.metro.IntoSet
 import dev.zacsweers.metro.Provides
@@ -59,6 +61,7 @@ import voice.core.common.rootGraphAs
 import voice.core.playback.session.KeyPress
 import voice.core.speaker.DisconnectResult
 import voice.core.speaker.PairedDevice
+import voice.core.ui.FeatureSwitch
 import voice.core.ui.icons.VoiceIcons
 import voice.navigation.Destination
 import voice.navigation.NavEntryProvider
@@ -74,8 +77,9 @@ interface PillowSpeakerGraph {
   val pillowSpeakerViewModel: PillowSpeakerViewModel
 }
 
+@BindingContainer
 @ContributesTo(AppScope::class)
-interface PillowSpeakerProvider {
+object PillowSpeakerProvider {
 
   @Provides
   @IntoSet
@@ -116,6 +120,12 @@ private fun PillowSpeaker(
         .padding(contentPadding)
         .verticalScroll(rememberScrollState()),
     ) {
+      FeatureSwitch(
+        title = stringResource(StringsR.string.pillow_speaker_use),
+        checked = viewState.settings.enabled,
+        onCheckedChange = viewModel::setEnabled,
+        offSummary = stringResource(StringsR.string.pillow_speaker_off_explain),
+      )
       if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
         ListItem { Text(stringResource(StringsR.string.pillow_speaker_needs_android_12)) }
         return@Column
@@ -160,15 +170,15 @@ private fun PillowSpeaker(
           color = MaterialTheme.colorScheme.onSurfaceVariant,
           modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
         )
-        var minutes by remember(viewState.settings.disconnectDelayMinutes) {
-          mutableFloatStateOf(viewState.settings.disconnectDelayMinutes.toFloat())
-        }
-        Slider(
-          value = minutes,
-          onValueChange = { minutes = it },
-          onValueChangeFinished = { viewModel.setDisconnectDelay(minutes.roundToInt()) },
-          valueRange = 1F..30F,
+        val minutes = rememberSliderState(
+          value = viewState.settings.disconnectDelayMinutes.toFloat(),
           steps = 28,
+          trackRange = 1F..30F,
+        )
+        Slider(
+          state = minutes,
+          onValueChange = { minutes.value = it },
+          onValueChangeFinished = { viewModel.setDisconnectDelay(minutes.value.roundToInt()) },
           modifier = Modifier.padding(horizontal = 24.dp),
         )
       }
@@ -466,7 +476,8 @@ private fun TapSpacing(
   millis: Int,
   onChange: (Int) -> Unit,
 ) {
-  var value by remember(millis) { mutableFloatStateOf(millis.toFloat()) }
+  val state = rememberSliderState(value = millis.toFloat(), steps = 29, trackRange = 0F..1500F)
+  val value = state.value
   Column {
     ListItem(
       supportingContent = {
@@ -482,11 +493,9 @@ private fun TapSpacing(
       Text(stringResource(StringsR.string.pillow_speaker_tap_spacing))
     }
     Slider(
-      value = value,
-      onValueChange = { value = (it / 50).roundToInt() * 50F },
-      onValueChangeFinished = { onChange(value.roundToInt()) },
-      valueRange = 0F..1500F,
-      steps = 29,
+      state = state,
+      onValueChange = { state.value = (it / 50).roundToInt() * 50F },
+      onValueChangeFinished = { onChange(state.value.roundToInt()) },
       modifier = Modifier.padding(horizontal = 24.dp),
     )
   }

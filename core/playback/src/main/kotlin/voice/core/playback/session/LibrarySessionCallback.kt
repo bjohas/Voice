@@ -65,10 +65,16 @@ class LibrarySessionCallback(
   init {
     // Whether a tap continues a gesture is decided on the spot, so keep the setting to hand.
     scope.launch {
-      speakerSettingsStore.data.collect { tapGesture.window = it.tapSpacingMillis.milliseconds }
+      speakerSettingsStore.data.collect {
+        tapGesture.window = it.tapSpacingMillis.milliseconds
+        gesturesOn = it.enabled
+      }
     }
   }
   private var lastKeyDownAt: Long? = null
+
+  @Volatile
+  private var gesturesOn = true
 
   /**
    * Quick taps on a speaker's or headset's back/forward button add up
@@ -92,7 +98,7 @@ class LibrarySessionCallback(
       KeyEvent.KEYCODE_MEDIA_PREVIOUS, KeyEvent.KEYCODE_MEDIA_REWIND, KeyEvent.KEYCODE_MEDIA_SKIP_BACKWARD -> false
       else -> null
     }
-    if (keyEvent == null || keyEvent.action != KeyEvent.ACTION_DOWN || keyEvent.repeatCount > 0) {
+    if (!gesturesOn || keyEvent == null || keyEvent.action != KeyEvent.ACTION_DOWN || keyEvent.repeatCount > 0) {
       return super.onMediaButtonEvent(session, controllerInfo, intent)
     }
     // Timed by arrival, not keyEvent.eventTime: keys relayed from a Bluetooth

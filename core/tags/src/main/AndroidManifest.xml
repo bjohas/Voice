@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <!-- NFC-TAGS.md: Tonies and other NFC tags as keys to server books. Optional hardware. -->
+  <uses-permission android:name="android.permission.NFC" />
+  <uses-feature
+    android:name="android.hardware.nfc"
+    android:required="false" />
+
+  <application>
+    <!-- Started by Android when a tag is read while bVoice is not open: plays, and closes. -->
+    <activity
+      android:name="voice.core.tags.TagScanActivity"
+      android:exported="true"
+      android:excludeFromRecents="true"
+      android:noHistory="true"
+      android:taskAffinity=""
+      android:theme="@android:style/Theme.Translucent.NoTitleBar">
+      <intent-filter>
+        <action android:name="android.nfc.action.TECH_DISCOVERED" />
+      </intent-filter>
+      <meta-data
+        android:name="android.nfc.action.TECH_DISCOVERED"
+        android:resource="@xml/nfc_tech_filter" />
+    </activity>
+    <!-- An unknown tag (not a Tonie): offers to open Settings -> Tags. -->
+    <activity
+      android:name="voice.core.tags.TagPromptActivity"
+      android:exported="false"
+      android:excludeFromRecents="true"
+      android:taskAffinity=""
+      android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+  </application>
+</manifest>

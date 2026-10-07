@@ -4,6 +4,8 @@ import voice.core.sync.ServerBook
 
 data class ServerBooksViewState(
   val serverUrl: String,
+  /** Switched on in Settings; off, nothing is fetched. */
+  val serverOn: Boolean,
   val authors: List<Author>,
   val loading: Boolean,
   val error: String?,

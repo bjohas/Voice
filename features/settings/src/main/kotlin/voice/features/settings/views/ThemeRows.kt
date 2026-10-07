@@ -204,6 +204,7 @@ private fun ThemeMode.label(): String {
 @Composable
 private fun ThemeColorScheme.label(): String {
   return when (this) {
+    ThemeColorScheme.BVoiceOrange -> stringResource(StringsR.string.settings_appearance_color_scheme_bvoice_orange)
     ThemeColorScheme.VoiceBlue -> stringResource(StringsR.string.settings_appearance_color_scheme_voice_blue)
     ThemeColorScheme.Dynamic -> stringResource(StringsR.string.settings_appearance_color_scheme_dynamic)
   }
@@ -212,7 +213,7 @@ private fun ThemeColorScheme.label(): String {
 @Composable
 private fun ThemeColorScheme.supportingText(): String? {
   return when (this) {
-    ThemeColorScheme.VoiceBlue -> null
+    ThemeColorScheme.BVoiceOrange, ThemeColorScheme.VoiceBlue -> null
     ThemeColorScheme.Dynamic -> stringResource(StringsR.string.settings_appearance_color_scheme_dynamic_summary)
   }
 }

@@ -71,18 +71,19 @@ behaviour is settled; the `START`/`STOP` lines stay.
 As for Voice (`./gradlew :app:assembleFreeDebug`). Build with `--no-scan`:
 Voice's build otherwise publishes a Gradle Build Scan.
 
-The server's address and API key are **not in the code**. The app keeps them
-in its own settings (Server books → cogwheel). A build can carry defaults,
-which the app copies into its settings on first start, from:
+The server's address and API key are **not in the code or the APK**. The
+app keeps them in its own settings, which survive updates. Two ways to set
+them on a phone:
 
-| | environment | Gradle property |
-|---|---|---|
-| server address | `VOICE_CONTENT_SERVER` | `voice.serverUrl` |
-| API key | `VOICE_SERVER_TOKEN` | `voice.serverToken` |
-| API key, from a JSON file with `credentials.password` | `VOICE_SERVER_TOKEN_FILE` | `voice.serverTokenFile` |
+- **Server books → cogwheel:** type the address and key.
+- **The server's setup page** (`/r/NAME/bvoice`, linked from the server's
+  page as "Set up bVoice on a phone"): scan its QR code with the phone's
+  camera, then tap **Open in bVoice**. The link
+  `bvoice://setup?url=…&key=…` opens `ServerSetupActivity`, which asks
+  before saving. Any server can offer the same link.
 
-A build with defaults has the key inside the APK — do not share it. Without
-them, the build says so and the app asks.
+Uninstalling the app (or clearing its data) forgets them; set up again from
+the setup page.
 
 **"Token" and "API key" are the same thing.** The app calls it the API key; the
 build settings and the code (`VOICE_SERVER_TOKEN`, `ServerConfig.token`) keep
@@ -103,8 +104,20 @@ Any HTTP server with these routes under one base address, with a bearer token
 | `GET api/v1/manifest` | `{"generation", "files": {"Author/Title/01.m4a": [size, sha256], …}}` |
 | `GET content/PATH` | the file, honouring `Range` |
 | `PUT api/v1/logs/DEVICE/YYYY-MM-DD.txt` | optional: stores a day's listening log; a 403/404 is taken as "not supported" |
+| `GET api/v1/tags` | optional, for NFC tags: `{"tags": {UID: {"name", "tech", "group", "fromStart", "cover"}}}`; UID in hex, upper case; `group` is a book's group, absent for none |
+| `GET api/v1/tags/UID/cover` | optional: the tag's picture (JPEG/PNG/WebP), 404 if none |
+| `PUT api/v1/tags/UID` | optional: `{"name", "tech", "group", "fromStart"}`, any subset; `"group": null` clears the book |
+| `PUT api/v1/devices/DEVICE/tags` | optional: the phone's own tag books, `{UID: {"title", "name", "fromStart", "server"}}`, the whole set; for showing, never for deciding |
 
 A book is a folder of chapter files, or one `.m4b` with chapters inside.
+Groups and paths are checked by the app: a path with empty, `.` or `..`
+segments is ignored.
+
+**Setting up a phone:** a server may offer the link
+`bvoice://setup?url=BASE&key=KEY` (both URL-encoded), for example as a
+button and a QR code on a page behind its login; bVoice asks before saving
+them. The server bVoice is developed against (app-media-server) is not
+published yet; any server with these routes works.
 
 ## Branches
 

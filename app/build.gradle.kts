@@ -31,8 +31,14 @@ android {
 
   defaultConfig {
     applicationId = "net.opendeved.bVoice"
-    versionName = providers.gradleProperty("voice.versionName").orNull ?: "1.0.0"
-    versionCode = providers.gradleProperty("voice.versionCode").orNull?.toInt() ?: Int.MAX_VALUE
+    // bVoice's own version (gradle.properties), not Voice's.
+    versionName = providers.gradleProperty("voice.versionName").orNull
+      ?: providers.gradleProperty("bvoice.versionName").orNull
+      ?: "1.0.0"
+    versionCode = (
+      providers.gradleProperty("voice.versionCode").orNull
+        ?: providers.gradleProperty("bvoice.versionCode").orNull
+      )?.toInt() ?: Int.MAX_VALUE
 
     testInstrumentationRunner = "voice.app.VoiceJUnitRunner"
   }
@@ -175,6 +181,8 @@ dependencies {
   implementation(projects.features.pillowSpeaker)
   implementation(projects.core.speaker)
   implementation(projects.core.listeninglog)
+  implementation(projects.core.tags)
+  implementation(projects.features.tags)
   implementation(projects.features.bookOverview)
   implementation(projects.core.search)
   implementation(projects.features.cover)

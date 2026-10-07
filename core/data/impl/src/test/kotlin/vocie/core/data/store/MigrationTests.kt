@@ -150,7 +150,7 @@ class MigrationTests {
     assertEquals(expected = 20, actual = testGraph.seekTimeStore.data.first())
     assertEquals(expected = 2, actual = testGraph.autoRewindAmountStore.data.first())
     assertEquals(expected = ThemeMode.FollowSystem, actual = testGraph.themeModeStore.data.first())
-    assertEquals(expected = ThemeColorScheme.VoiceBlue, actual = testGraph.themeColorSchemeStore.data.first())
+    assertEquals(expected = ThemeColorScheme.BVoiceOrange, actual = testGraph.themeColorSchemeStore.data.first())
   }
 
   @Test

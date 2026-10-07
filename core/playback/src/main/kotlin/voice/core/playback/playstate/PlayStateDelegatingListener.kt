@@ -21,6 +21,7 @@ class PlayStateDelegatingListener(private val playStateManager: PlayStateManager
     playWhenReady: Boolean,
     reason: Int,
   ) {
+    if (!playWhenReady) playStateManager.pausedOnRequest = reason == Player.PLAY_WHEN_READY_CHANGE_REASON_USER_REQUEST
     updatePlayState()
   }
 

@@ -31,7 +31,7 @@ internal fun AppVersion(
     },
     supportingContent = {
       Text(
-        text = appVersion,
+        text = "bVoice $appVersion",
         color = LocalContentColor.current.copy(alpha = 0.5F),
       )
     },

@@ -110,7 +110,7 @@
     <string name="settings.appearance.color_scheme.title">Esquema de cores</string>
     <string name="settings.appearance.color_scheme.dynamic">Cor dinámica</string>
     <string name="settings.appearance.color_scheme.dynamic.summary">Usa as cores do teu fondo de pantalla e do tema do sistema.</string>
-    <string name="settings.appearance.color_scheme.voice_blue">Azul bVoice</string>
+    <string name="settings.appearance.color_scheme.voice_blue">Azul Voice</string>
     <string name="settings.appearance.theme.dark">Escuro</string>
     <string name="settings.appearance.theme.follow_system">Seguir o sistema</string>
     <string name="settings.appearance.theme.light">Claro</string>
@@ -123,13 +123,7 @@
     <string name="settings.library.use_grid.title">Usar disposición en grella</string>
     <string name="settings.playback.auto_rewind.title">Retroceso automático</string>
     <string name="settings.playback.seek_time.title">Tempo a omitir</string>
-    <string name="settings.support.faq.title">PMF</string>
-    <string name="settings.support.get_support.title">Obter axuda</string>
-    <string name="settings.support.help_translating.title">Axuda a traducir bVoice</string>
     <string name="settings.support.report_issue.title">Informar dun problema</string>
-    <string name="settings.support.suggest_idea.title">Suxerir ideas</string>
-    <string name="settings.support.support_voice.summary">As doazóns axudan a manter bVoice</string>
-    <string name="settings.support.support_voice.title">Apoiar o desenvolvemento</string>
     <string name="support.action.donate_kofi">Doar en Ko-fi</string>
     <string name="support.description.maintenance">bVoice é gratuíto, de código aberto e mantido por unha soa persoa desenvolvedora.</string>
     <string name="support.description.maintenance_subtitle">As doazóns axudan a financiar o mantemento e desenvolvemento continuos.</string>

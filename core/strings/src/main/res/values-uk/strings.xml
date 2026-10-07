@@ -116,7 +116,7 @@
     <string name="settings.appearance.color_scheme.title">Колірна схема</string>
     <string name="settings.appearance.color_scheme.dynamic">Динамічний колір</string>
     <string name="settings.appearance.color_scheme.dynamic.summary">Використовує кольори з ваших шпалер і системної теми.</string>
-    <string name="settings.appearance.color_scheme.voice_blue">Синій bVoice</string>
+    <string name="settings.appearance.color_scheme.voice_blue">Синій Voice</string>
     <string name="settings.appearance.theme.dark">Темна</string>
     <string name="settings.appearance.theme.follow_system">Як у системі</string>
     <string name="settings.appearance.theme.light">Світла</string>
@@ -129,13 +129,7 @@
     <string name="settings.library.use_grid.title">Сіточний макет</string>
     <string name="settings.playback.auto_rewind.title">Інтервал автовідмотування</string>
     <string name="settings.playback.seek_time.title">Інтервал перемотування</string>
-    <string name="settings.support.faq.title">ЧаПи</string>
-    <string name="settings.support.get_support.title">Підтримка</string>
-    <string name="settings.support.help_translating.title">Допомога в перекладі bVoice</string>
     <string name="settings.support.report_issue.title">Повідомити про проблему</string>
-    <string name="settings.support.suggest_idea.title">Пропозиції</string>
-    <string name="settings.support.support_voice.summary">Донати допомагають підтримувати bVoice</string>
-    <string name="settings.support.support_voice.title">Підтримати розробку</string>
     <string name="support.action.donate_kofi">Задонатити на Ko-fi</string>
     <string name="support.description.maintenance">bVoice безкоштовний, з відкритим кодом і підтримується одним розробником.</string>
     <string name="support.description.maintenance_subtitle">Донати допомагають фінансувати постійну підтримку та розробку.</string>

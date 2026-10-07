@@ -99,10 +99,7 @@
     <string name="settings.library.use_grid.title">Brug gitterlayout</string>
     <string name="settings.playback.auto_rewind.title">Automatisk tilbagespoling</string>
     <string name="settings.playback.seek_time.title">Spring over mængde</string>
-    <string name="settings.support.get_support.title">Få support</string>
-    <string name="settings.support.help_translating.title">Hjælp med at oversætte bVoice</string>
     <string name="settings.support.report_issue.title">Rapporter et problem</string>
-    <string name="settings.support.suggest_idea.title">Foreslå en ide</string>
     <string name="shortcut.play_current.short_label">Spil nuværende</string>
     <string name="sleep_timer.action.open">Sleep-Timer</string>
     <string name="sleep_timer.dialog.action.decrement">Kortere</string>

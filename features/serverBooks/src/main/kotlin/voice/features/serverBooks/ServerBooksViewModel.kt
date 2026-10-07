@@ -1,5 +1,7 @@
 package voice.features.serverBooks
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -22,9 +24,11 @@ import voice.core.sync.ServerBook
 import voice.core.sync.SyncProgress
 import voice.features.serverBooks.ServerBooksViewState.Sync
 import voice.navigation.Navigator
+import voice.core.strings.R as StringsR
 
 @Inject
 class ServerBooksViewModel(
+  private val context: Context,
   private val bookSync: BookSync,
   @ServerConfigStore
   private val configStore: DataStore<ServerConfig>,
@@ -51,6 +55,7 @@ class ServerBooksViewModel(
     val books = (catalogue as? CatalogueState.Loaded)?.books.orEmpty()
     return ServerBooksViewState(
       serverUrl = config.url,
+      serverOn = config.enabled,
       authors = books.byAuthor(selection),
       loading = catalogue == CatalogueState.Loading,
       error = (catalogue as? CatalogueState.Failed)?.message,
@@ -73,8 +78,20 @@ class ServerBooksViewModel(
     bookSync.cancel()
   }
 
+  /** Reloads the list of the server's books, and says so: a quick reload otherwise looks like nothing. */
   fun refresh() {
-    bookSync.refresh()
+    scope.launch {
+      val text = when (val state = bookSync.reload()) {
+        is CatalogueState.Loaded -> context.resources.getQuantityString(
+          StringsR.plurals.server_books_refreshed,
+          state.books.size,
+          state.books.size,
+        )
+        is CatalogueState.Failed -> context.getString(StringsR.string.server_books_refresh_failed, state.message)
+        else -> return@launch
+      }
+      Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
+    }
   }
 
   fun editServer() {
@@ -92,9 +109,16 @@ class ServerBooksViewModel(
     serverDialog = null
     scope.launch {
       configStore.updateData {
-        ServerConfig(url = dialog.url.trim(), token = dialog.token.trim(), deviceName = dialog.deviceName.cleanDeviceName())
+        it.copy(url = dialog.url.trim(), token = dialog.token.trim(), deviceName = dialog.deviceName.cleanDeviceName())
       }
       bookSync.refresh()
+    }
+  }
+
+  fun setServerOn(on: Boolean) {
+    scope.launch {
+      configStore.updateData { it.copy(enabled = on) }
+      if (on) bookSync.refresh()
     }
   }
 

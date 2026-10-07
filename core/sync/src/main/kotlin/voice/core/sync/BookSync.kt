@@ -8,6 +8,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
@@ -68,9 +69,28 @@ public class BookSync(
     scope.launch { loadCatalogue() }
   }
 
+  /** Loads the catalogue again and says how that went: [CatalogueState.Loaded] or [CatalogueState.Failed]. */
+  public suspend fun reload(): CatalogueState {
+    loadCatalogue()
+    return catalogue.value
+  }
+
   public fun sync() {
     if (job?.isActive == true) return
     job = scope.launch { runSync() }
+  }
+
+  /**
+   * Syncs now and says how it ended. If a sync is running, this one starts
+   * after it, so it sees a selection changed meanwhile.
+   */
+  public suspend fun syncAndAwait(): SyncProgress {
+    val run = scope.async {
+      runSync()
+      progress.value
+    }
+    job = run
+    return run.await()
   }
 
   /** Stops a running sync. What was downloaded stays; a partial file resumes next time. */

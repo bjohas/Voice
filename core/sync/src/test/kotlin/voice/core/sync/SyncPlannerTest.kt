@@ -16,6 +16,8 @@ class SyncPlannerTest {
     local: Map<String, LocalFile> = emptyMap(),
     selection: Set<String> = setOf(a),
     previouslySynced: Set<String> = emptySet(),
+    remote: Map<String, RemoteFile> = this.remote,
+    catalogue: List<CatalogueItem> = this.catalogue,
   ) = SyncPlanner.plan(
     remote = remote,
     catalogue = catalogue,
@@ -25,6 +27,37 @@ class SyncPlannerTest {
     playingGroup = null,
     pathPrefix = "content/Audiobooks/",
   )
+
+  @Test
+  fun `a server path that would leave the books folder is never fetched`() {
+    val remote = remote + mapOf(
+      "content/Audiobooks/$a/../../escape.m4a" to RemoteFile(1, "x"),
+      "content/Audiobooks//abs.m4a" to RemoteFile(1, "x"),
+    )
+    assertEquals(listOf("$a/01.m4a", "$a/02.m4a"), plan(remote = remote).fetch.map { it.localPath })
+    assertEquals(false, SyncPlanner.isSafePath("A/./b"))
+    assertEquals(false, SyncPlanner.isSafePath("A\\b"))
+    assertEquals(true, SyncPlanner.isSafePath("Julia Donaldson/Room on the Broom/01.m4a"))
+  }
+
+  @Test
+  fun `an empty catalogue or manifest deletes nothing`() {
+    val local = mapOf("$a/01.m4a" to LocalFile(3, "aaa"), "Other/Book/01.m4a" to LocalFile(1, "x"))
+    val synced = setOf(a, "Other/Book")
+    assertEquals(emptyList<String>(), plan(local, previouslySynced = synced, catalogue = emptyList()).delete)
+    assertEquals(emptyList<String>(), plan(local, previouslySynced = synced, remote = emptyMap()).delete)
+  }
+
+  @Test
+  fun `a chosen book whose files are missing from the manifest is kept`() {
+    val other = "Other/Book"
+    val local = mapOf("$other/01.m4a" to LocalFile(1, "x"))
+    val catalogue = catalogue + CatalogueItem(group = "content/Audiobooks/$other", kind = "audiobook")
+    assertEquals(
+      emptyList<String>(),
+      plan(local, selection = setOf(a, other), previouslySynced = setOf(other), catalogue = catalogue).delete,
+    )
+  }
 
   @Test
   fun `the path prefix is stripped from paths and groups`() {

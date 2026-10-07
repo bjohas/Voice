@@ -13,6 +13,12 @@ class PlayStateManager {
   val playStateFlow: StateFlow<PlayState>
     field = MutableStateFlow(PlayState.Paused)
 
+  /**
+   * The last pause was asked for (a button, the app, a controller), not the
+   * system's doing (the audio route changing, focus lost).
+   */
+  var pausedOnRequest: Boolean = false
+
   var playState: PlayState
     set(value) {
       playStateFlow.value = value

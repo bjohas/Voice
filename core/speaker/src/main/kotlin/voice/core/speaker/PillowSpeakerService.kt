@@ -41,14 +41,17 @@ public class PillowSpeakerService : CompanionDeviceService() {
     graph.speakerAutoPlay.onServiceWoken(processAge)
   }
 
-  private fun connected(address: String?) {
-    graph.speakerAutoPlay.onSpeakerConnected(address)
+  private fun connected(
+    address: String?,
+    associationId: Int? = null,
+  ) {
+    graph.speakerAutoPlay.onSpeakerConnected(address, associationId = associationId)
   }
 
   @RequiresApi(Build.VERSION_CODES.BAKLAVA)
   override fun onDevicePresenceEvent(event: DevicePresenceEvent) {
     graph.logNotes.note("SPEAKER", "presence event ${event.event}")
-    if (event.event == DevicePresenceEvent.EVENT_BT_CONNECTED) connected(address = null)
+    if (event.event == DevicePresenceEvent.EVENT_BT_CONNECTED) connected(address = null, associationId = event.associationId)
   }
 
   @Deprecated("Deprecated in API 36")
@@ -63,4 +66,9 @@ public class PillowSpeakerService : CompanionDeviceService() {
   override fun onDeviceAppeared(address: String) {
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) connected(address)
   }
+
+  // Abstract on Android 12 and 12L (API 31-32): without it, the speaker going
+  // away would crash the app there. Nothing to do when it goes.
+  @Deprecated("Deprecated in API 33")
+  override fun onDeviceDisappeared(address: String) {}
 }

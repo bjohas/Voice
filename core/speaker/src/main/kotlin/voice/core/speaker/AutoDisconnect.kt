@@ -53,7 +53,7 @@ public class AutoDisconnect(
         if (state != PlayState.Paused) return@collectLatest
         val settings = settingsStore.data.first()
         val address = settings.address
-        if (!settings.disconnectAfterPause || address == null) return@collectLatest
+        if (!settings.enabled || !settings.disconnectAfterPause || address == null) return@collectLatest
         val wait = settings.disconnectDelayMinutes.coerceAtLeast(0).minutes
         schedule.at.value = clock.millis() + wait.inWholeMilliseconds
         try {
@@ -62,6 +62,9 @@ public class AutoDisconnect(
           // Played again (collectLatest cancels the wait) or about to disconnect: nothing pending.
           schedule.at.value = null
         }
+        // The wait can be long: switched off, or the speaker forgotten or changed, meanwhile?
+        val now = settingsStore.data.first()
+        if (!now.enabled || !now.disconnectAfterPause || now.address != address) return@collectLatest
         val result = link.disconnect(address)
         Logger.i("Paused ${settings.disconnectDelayMinutes} min: disconnect pillow speaker -> $result")
         if (result == DisconnectResult.Disconnected) {

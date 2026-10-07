@@ -41,11 +41,13 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavEntry
 import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.BindingContainer
 import dev.zacsweers.metro.ContributesTo
 import dev.zacsweers.metro.IntoSet
 import dev.zacsweers.metro.Provides
 import voice.core.common.rootGraphAs
 import voice.core.sync.ServerBook
+import voice.core.ui.FeatureSwitch
 import voice.core.ui.icons.VoiceIcons
 import voice.features.serverBooks.ServerBooksViewState.Sync
 import voice.navigation.Destination
@@ -57,8 +59,9 @@ interface ServerBooksGraph {
   val serverBooksViewModel: ServerBooksViewModel
 }
 
+@BindingContainer
 @ContributesTo(AppScope::class)
-interface ServerBooksProvider {
+object ServerBooksProvider {
 
   @Provides
   @IntoSet
@@ -105,12 +108,21 @@ private fun ServerBooks(
     },
   ) { contentPadding ->
     val message = when {
+      !viewState.serverOn -> null
       viewState.loading -> stringResource(StringsR.string.server_books_loading)
       viewState.error != null -> stringResource(StringsR.string.server_books_error, viewState.error)
       viewState.authors.isEmpty() -> stringResource(StringsR.string.server_books_empty)
       else -> null
     }
     LazyColumn(contentPadding = contentPadding) {
+      item {
+        FeatureSwitch(
+          title = stringResource(StringsR.string.server_books_use),
+          checked = viewState.serverOn,
+          onCheckedChange = viewModel::setServerOn,
+          offSummary = stringResource(StringsR.string.server_books_off_explain),
+        )
+      }
       if (message != null) {
         item {
           ListItem(

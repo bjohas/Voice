@@ -110,7 +110,7 @@
     <string name="settings.appearance.color_scheme.title">Färgschema</string>
     <string name="settings.appearance.color_scheme.dynamic">Dynamisk färg</string>
     <string name="settings.appearance.color_scheme.dynamic.summary">Använder färger från bakgrundsbilden och systemets tema.</string>
-    <string name="settings.appearance.color_scheme.voice_blue">bVoice-blå</string>
+    <string name="settings.appearance.color_scheme.voice_blue">Voice-blå</string>
     <string name="settings.appearance.theme.dark">Mörkt</string>
     <string name="settings.appearance.theme.follow_system">Följ systemet</string>
     <string name="settings.appearance.theme.light">Ljust</string>
@@ -123,13 +123,7 @@
     <string name="settings.library.use_grid.title">Använd rutnätslayout</string>
     <string name="settings.playback.auto_rewind.title">Automatisk bakåtspolning</string>
     <string name="settings.playback.seek_time.title">Hopplängd</string>
-    <string name="settings.support.faq.title">Vanliga frågor</string>
-    <string name="settings.support.get_support.title">Få hjälp</string>
-    <string name="settings.support.help_translating.title">Hjälp till att översätta bVoice</string>
     <string name="settings.support.report_issue.title">Rapportera ett problem</string>
-    <string name="settings.support.suggest_idea.title">Föreslå en idé</string>
-    <string name="settings.support.support_voice.summary">Donationer hjälper till att finansiera underhållet av bVoice</string>
-    <string name="settings.support.support_voice.title">Stöd utvecklingen</string>
     <string name="support.action.donate_kofi">Donera på Ko-fi</string>
     <string name="support.description.maintenance">bVoice är gratis, har öppen källkod och underhålls av en enda utvecklare.</string>
     <string name="support.description.maintenance_subtitle">Donationer bidrar till löpande underhåll och utveckling.</string>

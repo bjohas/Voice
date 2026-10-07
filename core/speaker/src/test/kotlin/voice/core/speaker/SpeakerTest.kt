@@ -43,6 +43,18 @@ class ShouldAutoPlayTest {
   }
 
   @Test
+  fun `on Android 16 only the speaker's own association plays`() {
+    val associated = paired.copy(associationId = 7)
+    assertTrue(SpeakerAutoPlay.shouldAutoPlay(associated, null, now, associationId = 7))
+    assertFalse(SpeakerAutoPlay.shouldAutoPlay(associated, null, now, associationId = 8))
+  }
+
+  @Test
+  fun `the pillow speaker switched off does not play`() {
+    assertFalse(SpeakerAutoPlay.shouldAutoPlay(paired.copy(enabled = false), SPEAKER, now))
+  }
+
+  @Test
   fun `a reconnect just after bVoice dropped the speaker does not play`() {
     val justDropped = paired.copy(lastOwnDisconnectMillis = now - 30.seconds.inWholeMilliseconds)
     assertFalse(SpeakerAutoPlay.shouldAutoPlay(justDropped, SPEAKER, now))
@@ -113,6 +125,18 @@ class AutoDisconnectTest {
   fun `opening the app paused never disconnects`() = runTest {
     backgroundScope.launch { autoDisconnect(this).run(states) }
     advanceTimeBy(60.minutes)
+    assertEquals(emptyList<String>(), link.disconnects)
+  }
+
+  @Test
+  fun `switched off during the wait, nothing is disconnected`() = runTest {
+    backgroundScope.launch { autoDisconnect(this).run(states) }
+    states.value = PlayState.Playing
+    runCurrent()
+    states.value = PlayState.Paused
+    advanceTimeBy(2.minutes)
+    settings.value.value = settings.value.value.copy(enabled = false)
+    advanceTimeBy(10.minutes)
     assertEquals(emptyList<String>(), link.disconnects)
   }
 

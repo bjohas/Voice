@@ -110,7 +110,7 @@
     <string name="settings.appearance.color_scheme.title">Fargeoppsett</string>
     <string name="settings.appearance.color_scheme.dynamic">Dynamisk farge</string>
     <string name="settings.appearance.color_scheme.dynamic.summary">Bruker farger fra bakgrunnen og systemdrakten din.</string>
-    <string name="settings.appearance.color_scheme.voice_blue">bVoice-blå</string>
+    <string name="settings.appearance.color_scheme.voice_blue">Voice-blå</string>
     <string name="settings.appearance.theme.dark">Mørk</string>
     <string name="settings.appearance.theme.follow_system">Følg systemet</string>
     <string name="settings.appearance.theme.light">Lys</string>
@@ -123,13 +123,7 @@
     <string name="settings.library.use_grid.title">Bruk rutenett</string>
     <string name="settings.playback.auto_rewind.title">Auto-tilbakespoling</string>
     <string name="settings.playback.seek_time.title">Hoppintervall</string>
-    <string name="settings.support.faq.title">Ofte stilte spørsmål</string>
-    <string name="settings.support.get_support.title">Få støtte</string>
-    <string name="settings.support.help_translating.title">Bistå oversettelsen</string>
     <string name="settings.support.report_issue.title">Rapporter problem</string>
-    <string name="settings.support.suggest_idea.title">Foreslå idé</string>
-    <string name="settings.support.support_voice.summary">Donasjoner bidrar til å vedlikeholde bVoice</string>
-    <string name="settings.support.support_voice.title">Støtt utviklingen</string>
     <string name="support.action.donate_kofi">Doner på Ko-fi</string>
     <string name="support.description.maintenance">bVoice er gratis, åpen kildekode og vedlikeholdes av én utvikler.</string>
     <string name="support.description.maintenance_subtitle">Donasjoner bidrar til å finansiere løpende vedlikehold og utvikling.</string>

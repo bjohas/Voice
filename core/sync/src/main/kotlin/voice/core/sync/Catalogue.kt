@@ -2,6 +2,7 @@ package voice.core.sync
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonArray
+import voice.core.data.sync.TagEntry
 
 /**
  * One row of the server's catalogue: a book, which is a folder of chapter files.
@@ -38,6 +39,20 @@ internal data class EpisodesResponse(
 internal data class ManifestResponse(
   val generation: Long = 0,
   val files: Map<String, JsonArray> = emptyMap(),
+)
+
+@Serializable
+internal data class TagsResponse(val tags: Map<String, TagEntry> = emptyMap())
+
+/** One of this phone's own tag assignments, as the server's tags page shows it. */
+@Serializable
+public data class PhoneTagReport(
+  /** The book's title: the server never sees the phone's paths. */
+  val title: String,
+  val name: String = "",
+  val fromStart: Boolean = false,
+  /** The book is a server book: this overrides another book the server has for the tag. */
+  val server: Boolean = false,
 )
 
 internal const val AUDIOBOOK_KIND = "audiobook"

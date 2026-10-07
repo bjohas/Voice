@@ -116,7 +116,7 @@
     <string name="settings.appearance.color_scheme.title">Цветовая схема</string>
     <string name="settings.appearance.color_scheme.dynamic">Динамический цвет</string>
     <string name="settings.appearance.color_scheme.dynamic.summary">Использует цвета ваших обоев и системной темы.</string>
-    <string name="settings.appearance.color_scheme.voice_blue">Синий bVoice</string>
+    <string name="settings.appearance.color_scheme.voice_blue">Синий Voice</string>
     <string name="settings.appearance.theme.dark">Тёмная</string>
     <string name="settings.appearance.theme.follow_system">Как в системе</string>
     <string name="settings.appearance.theme.light">Светлая</string>
@@ -129,13 +129,7 @@
     <string name="settings.library.use_grid.title">Использовать сетку</string>
     <string name="settings.playback.auto_rewind.title">Автоперемотка назад</string>
     <string name="settings.playback.seek_time.title">Интервал перемотки</string>
-    <string name="settings.support.faq.title">Частые Вопросы (ЧаВо)</string>
-    <string name="settings.support.get_support.title">Поддержка</string>
-    <string name="settings.support.help_translating.title">Помочь с переводом</string>
     <string name="settings.support.report_issue.title">Сообщить о проблеме</string>
-    <string name="settings.support.suggest_idea.title">Предложить идею</string>
-    <string name="settings.support.support_voice.summary">Пожертвования помогают поддерживать bVoice</string>
-    <string name="settings.support.support_voice.title">Поддержать разработку</string>
     <string name="support.action.donate_kofi">Пожертвовать на Ko-fi</string>
     <string name="support.description.maintenance">bVoice бесплатен, имеет открытый исходный код и поддерживается одним разработчиком.</string>
     <string name="support.description.maintenance_subtitle">Пожертвования помогают финансировать постоянную поддержку и разработку.</string>

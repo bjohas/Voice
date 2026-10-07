@@ -1,1 +1,1 @@
-A clean audiobook player for your own files, with sleep timer and bookmarks.
+Voice, plus books from your own server, a bedtime pillow speaker and NFC tags.

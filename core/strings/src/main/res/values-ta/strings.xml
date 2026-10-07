@@ -110,7 +110,7 @@
     <string name="settings.appearance.color_scheme.title">வண்ணத் திட்டம்</string>
     <string name="settings.appearance.color_scheme.dynamic">மாறும் வண்ணம்</string>
     <string name="settings.appearance.color_scheme.dynamic.summary">உங்கள் வால்பேப்பர் மற்றும் அமைப்பு தீமிலிருந்து வண்ணங்களைப் பயன்படுத்துகிறது.</string>
-    <string name="settings.appearance.color_scheme.voice_blue">bVoice நீலம்</string>
+    <string name="settings.appearance.color_scheme.voice_blue">Voice நீலம்</string>
     <string name="settings.appearance.theme.dark">இருண்ட</string>
     <string name="settings.appearance.theme.follow_system">அமைப்பைப் பின்பற்று</string>
     <string name="settings.appearance.theme.light">வெளிர்</string>
@@ -123,13 +123,7 @@
     <string name="settings.library.use_grid.title">கட்டம் தளவமைப்பைப் பயன்படுத்தவும்</string>
     <string name="settings.playback.auto_rewind.title">ஆட்டோ ரிவைண்ட்</string>
     <string name="settings.playback.seek_time.title">தொகையைத் தவிர்க்கவும்</string>
-    <string name="settings.support.faq.title">கேள்விகள்</string>
-    <string name="settings.support.get_support.title">ஆதரவை பெறு</string>
-    <string name="settings.support.help_translating.title">குரலை மொழிபெயர்க்க உதவுங்கள்</string>
     <string name="settings.support.report_issue.title">ஒரு சிக்கலைப் புகாரளிக்கவும்</string>
-    <string name="settings.support.suggest_idea.title">ஒரு யோசனையை பரிந்துரைக்கவும்</string>
-    <string name="settings.support.support_voice.summary">நன்கொடைகள் bVoice-ஐ பராமரிக்க உதவுகின்றன</string>
-    <string name="settings.support.support_voice.title">மேம்பாட்டை ஆதரிக்கவும்</string>
     <string name="support.action.donate_kofi">Ko-fi-யில் நன்கொடை அளிக்கவும்</string>
     <string name="support.description.maintenance">bVoice இலவசம், திறந்த மூலமாகும், மேலும் ஒரே ஒரு உருவாக்குநரால் பராமரிக்கப்படுகிறது.</string>
     <string name="support.description.maintenance_subtitle">நன்கொடைகள் தொடர்ச்சியான பராமரிப்பு மற்றும் மேம்பாட்டிற்கு நிதியளிக்க உதவுகின்றன.</string>

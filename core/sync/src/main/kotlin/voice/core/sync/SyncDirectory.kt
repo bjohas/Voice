@@ -2,6 +2,7 @@ package voice.core.sync
 
 import android.app.Application
 import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.BindingContainer
 import dev.zacsweers.metro.ContributesTo
 import dev.zacsweers.metro.Provides
 import dev.zacsweers.metro.SingleIn
@@ -21,6 +22,8 @@ public class SyncDirectory(
   /** Where :core:listeninglog writes, one file per day; uploaded after each sync. */
   internal val logs: File = File(books.parentFile, "listening-log"),
   internal val uploadsFile: File = File(stateFile.parentFile, "uploads.json"),
+  /** Tag pictures fetched from the server, one UID.jpg each; kept so they work offline. */
+  internal val tagCovers: File = File(stateFile.parentFile, "tag-covers"),
 )
 
 /** Asks the library to look at the books directory again. */
@@ -28,8 +31,9 @@ public fun interface LibraryRescan {
   public fun rescan()
 }
 
+@BindingContainer
 @ContributesTo(AppScope::class)
-public interface SyncModule {
+public object SyncModule {
 
   @Provides
   @SingleIn(AppScope::class)

@@ -54,6 +54,7 @@ public object SyncPlanner {
     val wantedFiles = remote.mapNotNull { (remotePath, file) ->
       if (!remotePath.startsWith(pathPrefix)) return@mapNotNull null
       val localPath = remotePath.removePrefix(pathPrefix)
+      if (!isSafePath(localPath)) return@mapNotNull null
       if (groupOf(localPath) in wanted) localPath to (remotePath to file) else null
     }.toMap()
 
@@ -70,15 +71,25 @@ public object SyncPlanner {
 
     val fetching = fetch.map { it.localPath }.toSet()
     val claimed = offered + previouslySynced
+    // Deleting trusts the server's answer, so not one that looks broken: an
+    // empty catalogue or manifest (a library mount down, a rescan halfway)
+    // deletes nothing, and nor does a chosen book the manifest has no files for.
+    val trusted = catalogue.isNotEmpty() && remote.isNotEmpty()
+    val groupsWithFiles = remote.keys
+      .filter { it.startsWith(pathPrefix) }
+      .mapNotNull { groupOf(it.removePrefix(pathPrefix)) }
+      .toSet()
     val kept = mutableSetOf<String>()
     val delete = local.keys.filter { path ->
       val finalPath = path.removeSuffix(PART_SUFFIX)
       val group = groupOf(finalPath) ?: return@filter false
       val isPart = path != finalPath
       when {
+        !trusted -> false
         group !in claimed -> false
         // A wanted file stays; its partial download stays only while it is still needed.
         finalPath in wantedFiles -> isPart && finalPath !in fetching
+        group in wanted && group !in groupsWithFiles -> false
         group == playingGroup -> {
           kept += group
           false
@@ -88,6 +99,17 @@ public object SyncPlanner {
     }.sorted()
 
     return SyncPlan(fetch = fetch, delete = delete, keptWhilePlaying = kept)
+  }
+
+  /**
+   * A path from the server that stays inside the books folder when joined to
+   * it: relative, with no empty, `.` or `..` segments, and no backslash or NUL.
+   * Paths and groups come from the server, so they are checked before they
+   * become files.
+   */
+  public fun isSafePath(path: String): Boolean {
+    if (path.isEmpty() || path.startsWith('/') || '\\' in path || '\u0000' in path) return false
+    return path.split('/').none { it.isEmpty() || it == "." || it == ".." }
   }
 
   /** The group a file belongs to: its folder, or null for a file at the top. */

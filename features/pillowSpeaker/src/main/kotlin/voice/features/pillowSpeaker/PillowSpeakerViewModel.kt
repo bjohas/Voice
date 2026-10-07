@@ -124,6 +124,10 @@ class PillowSpeakerViewModel(
     }
   }
 
+  fun setEnabled(enabled: Boolean) {
+    scope.launch { settingsStore.updateData { it.copy(enabled = enabled) } }
+  }
+
   fun setAutoPlay(enabled: Boolean) {
     scope.launch { settingsStore.updateData { it.copy(autoPlay = enabled) } }
   }
