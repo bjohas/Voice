@@ -86,7 +86,13 @@ Perhaps the most niche one (Settings → Tags). Hold a tag to the phone to start
 a book: plain NTAG cards and stickers, or things that have tags, like Tonie
 figures (only the tag's ID is read).
 
-- **Unknown tags:** a tag that isn't a Tonie offers to be set up.
+- **Setting up:** any tag, Tonies included, is set up by scanning it on
+  Settings → Tags and choosing its book there.
+- **Unknown tags elsewhere:** an unknown card or sticker offers to open that
+  page. An unknown Tonie does nothing, so a figure still played on its
+  Toniebox causes no prompts.
+- **Known tags without a book:** a tag that is known but has no book yet says
+  so.
 - **Phone books:** tags are given books on the phone, and work without any
   server.
 - **With a server:** a server book chosen on the phone is saved on the server,
