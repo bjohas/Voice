@@ -1,70 +1,130 @@
 # bVoice
 
 A fork of [Voice](https://github.com/PaulWoitaschek/Voice) by Paul Woitaschek,
-made for one use: a child listening to audiobooks in bed through a pillow
-speaker, with the books kept on a home server. It is a personal project, not
-affiliated with Voice, and not published in any store. Voice's own features
-are all still here; see its [documentation](https://voice.woitaschek.de).
+for Bluetooth bedtime listening. I've used Voice for a while, and these are
+tweaks made over time. They are probably not something everybody wants, but
+here they are. It is a personal project, not affiliated with Voice, and not in
+any store. Everything Voice does is still here; see its
+[documentation](https://voice.woitaschek.de). A note about bVoice for Voice's
+author: [Discussion #3841](https://github.com/PaulWoitaschek/Voice/discussions/3841).
 
-## What bVoice adds
+bVoice has its own application ID (`net.opendeved.bVoice`) and name, so it
+installs beside Voice. It credits Voice in its Settings ("Built on Voice", and
+"bVoice 0.5.0 · based on Voice 26.6.1+106") and points people to Voice for
+everything else. Each of the features below can be switched off in Settings,
+and its row carries an orange **bVoice** pill.
 
-**Its own identity.** Application id `net.opendeved.bVoice`, name "bVoice", a
-dark orange icon — so it installs beside Voice rather than over it. The icon is
-an override in `app/src/free/res`; Voice's files are untouched.
+## Starting, stopping and navigating audio as simply as possible
 
-**Server books** (Settings → Server books, or the Server button in onboarding).
-The server offers a catalogue of audiobooks; the phone shows it by author,
-ticks the books wanted, and syncs them into the app's own folder
-(`Android/data/net.opendeved.bVoice/files/books/Author/Title/`), which Voice
-reads as an Author folder. The **selection lives on the phone**, never on the
-server. Downloads resume after an interruption and are checked against the
-server's sha256; unticked books are removed, except the one playing, and a
-removed book keeps its listening position. Only books the server offers, or
-the sync put there, are ever removed. Code: `:core:sync`, `:features:serverBooks`.
+**Stopping attached devices reliably: Bluetooth speakers that need a disconnect
+to go to standby** (Settings → Pillow speaker). Units like the J207 won't go to
+sleep when the audio stops; they need to be disconnected. So when playback has
+been paused for a configurable time (for example after the sleep timer ends),
+bVoice disconnects the speaker, which then goes into its own standby. It also
+works the other way: when the speaker is switched on and connects, the book
+starts.
 
-**The pillow speaker** (Settings → Pillow speaker). Pair a Bluetooth speaker
-through Android's companion-device confirmation, then:
+Why this matters: the power consumption is much lower. The J207 lasts a long
+time if it is only used for about 30 minutes of listening a day, rather than
+staying on all day and night. Doing it other ways, with MacroDroid and the
+like, was fragile and sometimes unreliable; built into the player, it works
+well.
 
-- **Play when it connects** — the current book starts, whether or not bVoice is
-  running (via `CompanionDeviceService`). bVoice waits for the speaker's media
-  connection before playing, and retries once if playback stops at once.
-- **Disconnect after a pause** of a set length (1–30 min), so the speaker can
-  switch itself off — `BluetoothA2dp.disconnect` by reflection, which needs
-  only `BLUETOOTH_CONNECT`. Only the media connection is dropped: a speaker that
-  also connects for calls needs "Phone calls" turned off in Android's
-  Bluetooth settings.
-- A **force-stopped** app is not woken by Android; an automation that opens
-  bVoice on connect (Bixby Routines, MacroDroid, Tasker) covers that.
-- **Check**, **Disconnect now** and a **tap tester** for trying it out.
+- **Pairing:** pair the speaker through Android's companion-device
+  confirmation.
+- **Auto-play:** bVoice is woken through `CompanionDeviceService` presence
+  events. It waits for the speaker's media (A2DP) connection before playing,
+  and retries once if the route change pauses playback. A pause the user asks
+  for is left alone.
+- **Disconnect:** after a pause of 1–30 min, `BluetoothA2dp.disconnect` by
+  reflection, which needs only `BLUETOOTH_CONNECT`. Only the media connection
+  is dropped: a speaker that also connects for calls needs "Phone calls"
+  turned off in Android's Bluetooth settings.
+- **After a full shutdown:** if the app has been shut down completely
+  (force-stopped), Android doesn't always wake it on connect. An automation
+  that opens bVoice when the speaker connects (Bixby Routines, MacroDroid,
+  Tasker) covers that, and bVoice treats such a fresh start as the connect.
+- **Testing:** **Check**, **Disconnect now** and a **tap tester**.
+- **Code:** `:core:speaker`, `:features:pillowSpeaker`.
 
-Code: `:core:speaker`, `:features:pillowSpeaker`.
+**Speaker tap gestures.** Quick taps on a speaker's or headset's back/forward
+button add up:
 
-**Speaker-button taps jump further.** Quick taps on a speaker's or headset's
-back/forward add up: two ordinary jumps (the Seek time), then 1, 2, 5 and
-10 minutes, then 5 minutes more a tap. Each tap acts at once. What counts as
-quick is the **Tap spacing** setting (400 ms; 0 turns it off). On-screen and
-notification buttons are unchanged. Forward jumps now cross several chapters,
-as backward ones already did. Code: `TapGesture`, `LibrarySessionCallback`.
+- The first two taps are ordinary jumps (the Seek time); then 1, 2, 5 and
+  10 minutes, then 5 minutes more a tap. Each tap acts at once.
+- What counts as quick is the **Tap spacing** setting (400 ms; 0 turns it off).
+- On-screen and notification buttons are unchanged. Forward jumps cross
+  chapters, as backward ones already did.
 
-**A listening log — deliberately very basic.** One tab-separated line per
-start and stop — local time with offset, book, position — in one text file per
-day (`Android/data/net.opendeved.bVoice/files/listening-log/`), uploaded to the
-server after each sync. Code: `:core:listeninglog`.
+Useful for moving back and forth without reaching for the phone. Code:
+`TapGesture`, `LibrarySessionCallback`.
 
-Voice's author plans a listening log of his own: see the discussion on the
-closed [PR #3503 "Feature/audiolog"](https://github.com/PaulWoitaschek/Voice/pull/3503),
-where he describes it as a timeline or a joined bookmarks/audio-log screen,
-recorded as typed events in the app's database. **When that arrives upstream,
-bVoice will adopt it** and keep only what the server needs on top — the daily
-file and its upload — fed from upstream's events. Until then, bVoice offers
-this basic log.
+## Loading and offloading books
+
+**Books from a home server** (Settings → Server books). Choose audiobooks from
+a small self-hosted HTTP server and keep them on the phone. Easier than
+Syncthing and the like, and it saves space, since books can be offloaded
+again.
+
+- **Choosing:** the phone shows the server's catalogue by author. You tick
+  books and sync them into the app's own folder
+  (`Android/data/net.opendeved.bVoice/files/books/Author/Title/`). The
+  selection lives on the phone.
+- **Downloading:** downloads resume after an interruption and are checked
+  against the server's sha256.
+- **Removing:** unticked books are removed, except the one playing, and keep
+  their listening position. A server answer that looks broken (an empty
+  catalogue, say) removes nothing.
+- **Setting up a phone:** scan a QR code on the server's page. No server
+  address or key is built into the app.
+- **The server's API:** below, under "What the server must provide".
+- **Code:** `:core:sync`, `:features:serverBooks`.
+
+## NFC as a Tonie/Yoto-style player
+
+Perhaps the most niche one (Settings → Tags). Hold a tag to the phone to start
+a book: plain NTAG cards and stickers, or things that have tags, like Tonie
+figures (only the tag's ID is read).
+
+- **Unknown tags:** a tag that isn't a Tonie offers to be set up.
+- **Phone books:** tags are given books on the phone, and work without any
+  server.
+- **With a server:** a server book chosen on the phone is saved on the server,
+  and tags can also be assigned on the server's tags page. A book only the
+  phone has overrides the server's for that tag.
+- **Labels:** each tag shows *server*, *phone* or *override*.
+- **Code:** `:core:tags`, `:features:tags`.
+
+## Listening log
+
+A plain-text file per day (`Android/data/net.opendeved.bVoice/files/listening-log/`),
+with one tab-separated line per start and stop: local time with offset, book,
+position. If a server is used, it is handed over after each sync. It can be
+switched off. Code: `:core:listeninglog`.
+
+Voice's author plans a listening log of his own (see the closed
+[PR #3503 "Feature/audiolog"](https://github.com/PaulWoitaschek/Voice/pull/3503)),
+so this is an interim feature. When that arrives upstream, bVoice will adopt
+it and keep only what the server needs on top: the daily file and its upload.
 
 For now the log also carries **temporary diagnostic lines**, used to get the
-speaker behaviour right: `TAP` (each back/forward tap from a speaker — its
-count in the gesture, what it added, the gap since the key before) and
-`SPEAKER` (the system waking the companion service, connect events, and
-whether auto-play played or why not). They will be removed once the speaker
-behaviour is settled; the `START`/`STOP` lines stay.
+speaker behaviour right:
+
+- `TAP`: each back/forward tap, its count in the gesture, what it added and
+  the gap since the last key.
+- `SPEAKER`: the service being woken, connect events, and whether auto-play
+  played, or why not.
+- `TAG`: tags scanned, and what they played.
+
+They will go once the behaviour is settled. The `START`/`STOP` lines stay.
+
+## Its own look
+
+The icon and the default colour scheme are dark orange ("bVoice orange"; Voice
+blue and Dynamic are still offered). The icon is an override in
+`app/src/free/res`; Voice's files are untouched. Settings' support rows point
+to bVoice (problem reports) or to Voice ("Built on Voice"), not to Voice's
+donation, translation and FAQ pages.
 
 ## Building
 
