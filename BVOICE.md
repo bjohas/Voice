@@ -124,6 +124,14 @@ published yet; any server with these routes works.
 `bvoice-main` is the published branch: upstream Voice's history plus one
 squashed commit per update. `main` follows upstream Voice unchanged.
 
+**Versions** (`gradle.properties`): `bvoice.versionName` and
+`bvoice.versionCode` are bVoice's own, the code one higher with each release
+(with `fastlane/metadata/android/en-US/changelogs/CODE.txt`).
+`bvoice.basedOnVoice` names the Voice release underneath and how many
+upstream commits past it (`git describe --tags upstream/main`, e.g.
+`26.6.1+106`); update it with every upstream merge. Settings shows
+"bVoice 0.5.0 · based on Voice 26.6.1+106".
+
 ## Licence
 
 GPL-3.0, as Voice ([LICENSE.md](LICENSE.md)).

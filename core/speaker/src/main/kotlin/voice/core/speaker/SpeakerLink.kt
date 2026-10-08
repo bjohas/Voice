@@ -28,6 +28,12 @@ public interface SpeakerLink {
   public fun pairedDevices(): List<PairedDevice>
   public suspend fun isConnected(address: String): Boolean
   public suspend fun disconnect(address: String): DisconnectResult
+
+  /** Waits for [address]'s media to connect: how long it took, or null after [timeoutMs]. */
+  public suspend fun awaitConnected(
+    address: String,
+    timeoutMs: Long,
+  ): Long? = SpeakerAutoPlay.waitForMedia(timeoutMs) { isConnected(address) }
 }
 
 public data class PairedDevice(
@@ -106,6 +112,14 @@ public class AndroidSpeakerLink(private val context: Context) : SpeakerLink {
     } ?: DisconnectResult.Failed("Bluetooth is off or unavailable")
   }
 
+  /** One proxy for the whole wait, not one per poll. */
+  override suspend fun awaitConnected(
+    address: String,
+    timeoutMs: Long,
+  ): Long? = withA2dp(address) { a2dp, device ->
+    SpeakerAutoPlay.waitForMedia(timeoutMs) { a2dp.connectedState(device) }
+  }
+
   @SuppressLint("MissingPermission")
   private fun BluetoothA2dp.connectedState(device: BluetoothDevice): Boolean =
     getConnectionState(device) == BluetoothProfile.STATE_CONNECTED
@@ -113,7 +127,7 @@ public class AndroidSpeakerLink(private val context: Context) : SpeakerLink {
   @SuppressLint("MissingPermission")
   private suspend fun <T> withA2dp(
     address: String,
-    block: (BluetoothA2dp, BluetoothDevice) -> T,
+    block: suspend (BluetoothA2dp, BluetoothDevice) -> T,
   ): T? {
     val adapter = context.getSystemService(BluetoothManager::class.java)?.adapter ?: return null
     if (!adapter.isEnabled) return null
@@ -129,7 +143,12 @@ public class AndroidSpeakerLink(private val context: Context) : SpeakerLink {
             profile: Int,
             proxy: BluetoothProfile,
           ) {
-            if (continuation.isActive) continuation.resume(proxy as BluetoothA2dp)
+            if (continuation.isActive) {
+              continuation.resume(proxy as BluetoothA2dp)
+            } else {
+              // Too late (timed out or cancelled): nobody will close it otherwise.
+              adapter.closeProfileProxy(BluetoothProfile.A2DP, proxy)
+            }
           }
 
           override fun onServiceDisconnected(profile: Int) {}

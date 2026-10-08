@@ -105,7 +105,7 @@ public class BookSync(
       val items = client.catalogue(config)
       val manifest = client.manifest(config)
       val local = withContext(Dispatchers.IO) { localFiles(SyncState.read(directory.stateFile)) }
-      CatalogueState.Loaded(items.map { it.toBook(config, manifest, local) })
+      CatalogueState.Loaded(items.map { it.toBook(manifest, local) })
     } catch (e: IOException) {
       Logger.w(e, "Could not load the catalogue")
       CatalogueState.Failed(e.message ?: e.toString())
@@ -148,7 +148,7 @@ public class BookSync(
     val selectedGroups = selection.toSet()
     val hashed = state.hashes.toMutableMap()
     local = local.mapValues { (path, file) ->
-      val remoteFile = remote[config.pathPrefix + path]
+      val remoteFile = remote[path]
       val worthHashing = file.sha256 == null &&
         remoteFile != null &&
         remoteFile.size == file.size &&
@@ -171,7 +171,6 @@ public class BookSync(
       local = local,
       previouslySynced = state.synced,
       playingGroup = playingGroup(),
-      pathPrefix = config.pathPrefix,
     )
     Logger.i("Sync plan: fetch ${plan.fetch.size} (${plan.fetchBytes} bytes), delete ${plan.delete.size}")
 
@@ -211,7 +210,7 @@ public class BookSync(
     }
     pruneEmptyDirectories(directory.books)
 
-    val offered = items.map { SyncPlanner.localGroup(it.group, config.pathPrefix) }.toSet()
+    val offered = items.map { it.group }.toSet()
     val onDevice = localFiles(state).keys.mapNotNull { SyncPlanner.groupOf(it.removeSuffix(SyncPlanner.PART_SUFFIX)) }.toSet()
     val synced = (state.synced + (selection intersect offered)) intersect onDevice
     SyncState(synced = synced, hashes = hashed.filterKeys { File(directory.books, it).isFile })
@@ -278,22 +277,17 @@ public class BookSync(
   }
 
   private fun CatalogueItem.toBook(
-    config: ServerConfig,
     manifest: Map<String, RemoteFile>,
     local: Map<String, LocalFile>,
   ): ServerBook {
-    val localGroup = SyncPlanner.localGroup(group, config.pathPrefix)
-    val files = manifest.filterKeys { key ->
-      key.startsWith(config.pathPrefix) &&
-        SyncPlanner.groupOf(key.removePrefix(config.pathPrefix)) == localGroup
-    }
-    val present = files.count { (key, remote) -> local[key.removePrefix(config.pathPrefix)]?.size == remote.size }
+    val files = manifest.filterKeys { key -> SyncPlanner.groupOf(key) == group }
+    val present = files.count { (key, remote) -> local[key]?.size == remote.size }
     val status = when {
       files.isEmpty() || present == 0 -> ServerBook.Status.NotOnDevice
       present == files.size -> ServerBook.Status.OnDevice
       else -> ServerBook.Status.Partial
     }
-    return ServerBook(item = this, group = localGroup, status = status)
+    return ServerBook(item = this, group = group, status = status)
   }
 }
 

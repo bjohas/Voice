@@ -126,64 +126,65 @@ private fun PillowSpeaker(
         onCheckedChange = viewModel::setEnabled,
         offSummary = stringResource(StringsR.string.pillow_speaker_off_explain),
       )
+      // Before Android 12 there is no pairing or auto-play, but the tap gestures work.
       if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
         ListItem { Text(stringResource(StringsR.string.pillow_speaker_needs_android_12)) }
-        return@Column
-      }
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !viewState.hasPermission) PermissionRow(viewModel::onPermissionResult)
-      SpeakerRow(
-        viewState = viewState,
-        onPair = viewModel::onPaired,
-        onPairFail = viewModel::onPairingFailed,
-        onForget = viewModel::forget,
-        onOpenChooser = viewModel::openChooser,
-        onCloseChooser = viewModel::closeChooser,
-      )
-      SwitchRow(
-        title = stringResource(StringsR.string.pillow_speaker_auto_play),
-        summary = stringResource(StringsR.string.pillow_speaker_auto_play_summary),
-        checked = viewState.settings.autoPlay,
-        onCheckedChange = viewModel::setAutoPlay,
-      )
-      if (viewState.settings.autoPlay) {
-        Text(
-          stringResource(StringsR.string.pillow_speaker_force_stop_note),
-          style = MaterialTheme.typography.bodySmall,
-          color = MaterialTheme.colorScheme.onSurfaceVariant,
-          modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
+      } else {
+        if (!viewState.hasPermission) PermissionRow(viewModel::onPermissionResult)
+        SpeakerRow(
+          viewState = viewState,
+          onPair = viewModel::onPaired,
+          onPairFail = viewModel::onPairingFailed,
+          onForget = viewModel::forget,
+          onOpenChooser = viewModel::openChooser,
+          onCloseChooser = viewModel::closeChooser,
         )
-      }
-      SwitchRow(
-        title = stringResource(StringsR.string.pillow_speaker_disconnect),
-        summary = pluralStringResource(
-          StringsR.plurals.pillow_speaker_disconnect_summary,
-          viewState.settings.disconnectDelayMinutes,
-          viewState.settings.disconnectDelayMinutes,
-        ),
-        checked = viewState.settings.disconnectAfterPause,
-        onCheckedChange = viewModel::setDisconnectAfterPause,
-      )
-      if (viewState.settings.disconnectAfterPause) {
-        Text(
-          stringResource(StringsR.string.pillow_speaker_disconnect_note),
-          style = MaterialTheme.typography.bodySmall,
-          color = MaterialTheme.colorScheme.onSurfaceVariant,
-          modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
+        SwitchRow(
+          title = stringResource(StringsR.string.pillow_speaker_auto_play),
+          summary = stringResource(StringsR.string.pillow_speaker_auto_play_summary),
+          checked = viewState.settings.autoPlay,
+          onCheckedChange = viewModel::setAutoPlay,
         )
-        val minutes = rememberSliderState(
-          value = viewState.settings.disconnectDelayMinutes.toFloat(),
-          steps = 28,
-          trackRange = 1F..30F,
+        if (viewState.settings.autoPlay) {
+          Text(
+            stringResource(StringsR.string.pillow_speaker_force_stop_note),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
+          )
+        }
+        SwitchRow(
+          title = stringResource(StringsR.string.pillow_speaker_disconnect),
+          summary = pluralStringResource(
+            StringsR.plurals.pillow_speaker_disconnect_summary,
+            viewState.settings.disconnectDelayMinutes,
+            viewState.settings.disconnectDelayMinutes,
+          ),
+          checked = viewState.settings.disconnectAfterPause,
+          onCheckedChange = viewModel::setDisconnectAfterPause,
         )
-        Slider(
-          state = minutes,
-          onValueChange = { minutes.value = it },
-          onValueChangeFinished = { viewModel.setDisconnectDelay(minutes.value.roundToInt()) },
-          modifier = Modifier.padding(horizontal = 24.dp),
-        )
-      }
-      if (viewState.settings.address != null) {
-        TestRow(viewState, onDisconnectNow = viewModel::disconnectNow, onCheck = viewModel::checkConnection)
+        if (viewState.settings.disconnectAfterPause) {
+          Text(
+            stringResource(StringsR.string.pillow_speaker_disconnect_note),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
+          )
+          val minutes = rememberSliderState(
+            value = viewState.settings.disconnectDelayMinutes.toFloat(),
+            steps = 28,
+            trackRange = 1F..30F,
+          )
+          Slider(
+            state = minutes,
+            onValueChange = { minutes.value = it },
+            onValueChangeFinished = { viewModel.setDisconnectDelay(minutes.value.roundToInt()) },
+            modifier = Modifier.padding(horizontal = 24.dp),
+          )
+        }
+        if (viewState.settings.address != null) {
+          TestRow(viewState, onDisconnectNow = viewModel::disconnectNow, onCheck = viewModel::checkConnection)
+        }
       }
       TapSpacing(viewState.settings.tapSpacingMillis, onChange = viewModel::setTapSpacing)
       TapTester(viewState.presses, onClear = viewModel::clearPresses)

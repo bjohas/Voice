@@ -108,7 +108,8 @@ class SettingsViewModel(
       seekTimeInSeconds = seekTime,
       autoRewindInSeconds = autoRewindAmount,
       dialog = dialog.value,
-      appVersion = appInfoProvider.versionName,
+      appVersion =
+      appInfoProvider.versionName + appInfoProvider.basedOnVoice.takeIf { it.isNotEmpty() }?.let { " · based on Voice $it" }.orEmpty(),
       useGrid = when (gridMode) {
         GridMode.LIST -> false
         GridMode.GRID -> true

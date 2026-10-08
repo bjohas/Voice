@@ -94,8 +94,9 @@ class LibrarySessionCallback(
       intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT)
     }
     val forward = when (keyEvent?.keyCode) {
-      KeyEvent.KEYCODE_MEDIA_NEXT, KeyEvent.KEYCODE_MEDIA_FAST_FORWARD, KeyEvent.KEYCODE_MEDIA_SKIP_FORWARD -> true
-      KeyEvent.KEYCODE_MEDIA_PREVIOUS, KeyEvent.KEYCODE_MEDIA_REWIND, KeyEvent.KEYCODE_MEDIA_SKIP_BACKWARD -> false
+      // Not SKIP_FORWARD/BACKWARD: Media3 may not act on them, so the first tap would do nothing.
+      KeyEvent.KEYCODE_MEDIA_NEXT, KeyEvent.KEYCODE_MEDIA_FAST_FORWARD -> true
+      KeyEvent.KEYCODE_MEDIA_PREVIOUS, KeyEvent.KEYCODE_MEDIA_REWIND -> false
       else -> null
     }
     if (!gesturesOn || keyEvent == null || keyEvent.action != KeyEvent.ACTION_DOWN || keyEvent.repeatCount > 0) {

@@ -46,14 +46,12 @@ public object SyncPlanner {
     local: Map<String, LocalFile>,
     previouslySynced: Set<String>,
     playingGroup: String?,
-    pathPrefix: String,
   ): SyncPlan {
-    val offered = catalogue.map { localGroup(it.group, pathPrefix) }.toSet()
+    val offered = catalogue.map { it.group }.toSet()
     val wanted = selection intersect offered
 
     val wantedFiles = remote.mapNotNull { (remotePath, file) ->
-      if (!remotePath.startsWith(pathPrefix)) return@mapNotNull null
-      val localPath = remotePath.removePrefix(pathPrefix)
+      val localPath = remotePath
       if (!isSafePath(localPath)) return@mapNotNull null
       if (groupOf(localPath) in wanted) localPath to (remotePath to file) else null
     }.toMap()
@@ -75,10 +73,7 @@ public object SyncPlanner {
     // empty catalogue or manifest (a library mount down, a rescan halfway)
     // deletes nothing, and nor does a chosen book the manifest has no files for.
     val trusted = catalogue.isNotEmpty() && remote.isNotEmpty()
-    val groupsWithFiles = remote.keys
-      .filter { it.startsWith(pathPrefix) }
-      .mapNotNull { groupOf(it.removePrefix(pathPrefix)) }
-      .toSet()
+    val groupsWithFiles = remote.keys.mapNotNull { groupOf(it) }.toSet()
     val kept = mutableSetOf<String>()
     val delete = local.keys.filter { path ->
       val finalPath = path.removeSuffix(PART_SUFFIX)
@@ -117,9 +112,4 @@ public object SyncPlanner {
     val slash = localPath.lastIndexOf('/')
     return if (slash <= 0) null else localPath.substring(0, slash)
   }
-
-  public fun localGroup(
-    group: String,
-    pathPrefix: String,
-  ): String = group.removePrefix(pathPrefix).trim('/')
 }

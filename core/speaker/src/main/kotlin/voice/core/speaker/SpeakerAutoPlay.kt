@@ -94,7 +94,7 @@ public class SpeakerAutoPlay(
       logNotes.note("SPEAKER", "$why (${address ?: "no address"}): not playing, $reason")
       return
     }
-    val waited = waitForMedia { link.isConnected(target) }
+    val waited = link.awaitConnected(target, MEDIA_TIMEOUT_MS)
     logNotes.note(
       "SPEAKER",
       if (waited != null) {

@@ -58,8 +58,11 @@ public class TagMapSync(
   /** The server is on and has an address: tags may be named and given books there. */
   public val configured: Flow<Boolean> = configStore.data.map { it.active }.distinctUntilChanged()
 
-  /** The picture fetched for this tag, if any. */
-  public fun cover(uid: String): File? = File(directory.tagCovers, "$uid.jpg").takeIf { it.isFile }
+  /** The pictures fetched so far, by UID. Reads the disk: call it off the main thread. */
+  public fun covers(): Map<String, File> = directory.tagCovers.listFiles()
+    ?.filter { it.isFile && it.extension == "jpg" }
+    ?.associateBy { it.nameWithoutExtension }
+    .orEmpty()
 
   private suspend fun syncPictures(
     config: ServerConfig,

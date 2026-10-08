@@ -31,6 +31,8 @@ android {
 
   defaultConfig {
     applicationId = "net.opendeved.bVoice"
+    val basedOnVoice = providers.gradleProperty("bvoice.basedOnVoice").orNull.orEmpty()
+    buildConfigField(type = "String", name = "BASED_ON_VOICE", value = "\"$basedOnVoice\"")
     // bVoice's own version (gradle.properties), not Voice's.
     versionName = providers.gradleProperty("voice.versionName").orNull
       ?: providers.gradleProperty("bvoice.versionName").orNull

@@ -7,10 +7,10 @@ class SyncPlannerTest {
 
   private val a = "Author/Book"
   private val remote = mapOf(
-    "content/Audiobooks/$a/01.m4a" to RemoteFile(3, "aaa"),
-    "content/Audiobooks/$a/02.m4a" to RemoteFile(4, "bbb"),
+    "$a/01.m4a" to RemoteFile(3, "aaa"),
+    "$a/02.m4a" to RemoteFile(4, "bbb"),
   )
-  private val catalogue = listOf(CatalogueItem(group = "content/Audiobooks/$a", kind = "audiobook"))
+  private val catalogue = listOf(CatalogueItem(group = a, kind = "audiobook"))
 
   private fun plan(
     local: Map<String, LocalFile> = emptyMap(),
@@ -25,14 +25,13 @@ class SyncPlannerTest {
     local = local,
     previouslySynced = previouslySynced,
     playingGroup = null,
-    pathPrefix = "content/Audiobooks/",
   )
 
   @Test
   fun `a server path that would leave the books folder is never fetched`() {
     val remote = remote + mapOf(
-      "content/Audiobooks/$a/../../escape.m4a" to RemoteFile(1, "x"),
-      "content/Audiobooks//abs.m4a" to RemoteFile(1, "x"),
+      "$a/../../escape.m4a" to RemoteFile(1, "x"),
+      "/abs.m4a" to RemoteFile(1, "x"),
     )
     assertEquals(listOf("$a/01.m4a", "$a/02.m4a"), plan(remote = remote).fetch.map { it.localPath })
     assertEquals(false, SyncPlanner.isSafePath("A/./b"))
@@ -52,17 +51,11 @@ class SyncPlannerTest {
   fun `a chosen book whose files are missing from the manifest is kept`() {
     val other = "Other/Book"
     val local = mapOf("$other/01.m4a" to LocalFile(1, "x"))
-    val catalogue = catalogue + CatalogueItem(group = "content/Audiobooks/$other", kind = "audiobook")
+    val catalogue = catalogue + CatalogueItem(group = other, kind = "audiobook")
     assertEquals(
       emptyList<String>(),
       plan(local, selection = setOf(a, other), previouslySynced = setOf(other), catalogue = catalogue).delete,
     )
-  }
-
-  @Test
-  fun `the path prefix is stripped from paths and groups`() {
-    assertEquals(listOf("$a/01.m4a", "$a/02.m4a"), plan().fetch.map { it.localPath })
-    assertEquals("content/Audiobooks/$a/01.m4a", plan().fetch.first().remotePath)
   }
 
   @Test

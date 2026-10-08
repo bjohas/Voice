@@ -19,7 +19,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import voice.core.common.rootGraphAs
@@ -103,7 +104,12 @@ public class TagReading(
     )
     scope.launch {
       refreshTags("app start")
-      bookSync.progress.filterIsInstance<SyncProgress.Finished>().collect { refreshTags("after a sync") }
+      // Once per sync: a run reports Finished twice (again with the logs it sent).
+      bookSync.progress
+        .map { it is SyncProgress.Finished }
+        .distinctUntilChanged()
+        .filter { it }
+        .collect { refreshTags("after a sync") }
     }
   }
 

@@ -6,13 +6,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.core.net.toUri
 import androidx.datastore.core.DataStore
 import dev.zacsweers.metro.Inject
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import voice.core.common.DispatcherProvider
 import voice.core.common.MainScope
 import voice.core.data.Book
@@ -115,11 +118,15 @@ class TagsViewModel(
     val catalogue by bookSync.catalogue.collectAsState()
     val configured by remember { tagMapSync.configured }.collectAsState(false)
     val lastScan by tagPlayer.lastScan.collectAsState()
+    // Off the main thread, and again only when the map changes (pictures come with it).
+    val covers by produceState(emptyMap<String, File>(), map) {
+      value = withContext(Dispatchers.IO) { tagMapSync.covers() }
+    }
     val serverConfig by remember { serverConfigStore.data }.collectAsState(ServerConfig())
     val tagsOn by remember { tagsEnabledStore.data }.collectAsState(true)
     val books = library.filter { it.content.isActive }.associateBy { it.id }
     val serverBooks = (catalogue as? CatalogueState.Loaded)?.books.orEmpty()
-    val rows = (map.keys + local.keys).map { uid -> row(uid, map[uid], local[uid], books, serverBooks) }
+    val rows = (map.keys + local.keys).map { uid -> row(uid, map[uid], local[uid], books, serverBooks, covers) }
     return TagsViewState(
       lastScan = lastScan,
       lastScanRow = lastScan?.let { tag -> rows.firstOrNull { it.uid == tag.uid } },
@@ -144,6 +151,7 @@ class TagsViewModel(
     mine: LocalTagEntry?,
     books: Map<BookId, Book>,
     serverBooks: List<ServerBook>,
+    covers: Map<String, File>,
   ): TagRowState {
     val name = entry?.name?.takeIf { it.isNotBlank() && it != uid } ?: mine?.name?.takeIf { it.isNotBlank() } ?: uid
     val serverGroup = entry?.group?.takeIf { it.isNotBlank() }
@@ -165,9 +173,9 @@ class TagsViewModel(
         book = title(serverGroup, books, serverBooks),
         serverBook = null,
         fromStart = entry.fromStart,
-        picture = tagMapSync.cover(uid) ?: books[localTags.bookOf(serverGroup)]?.content?.cover,
+        picture = covers[uid] ?: books[localTags.bookOf(serverGroup)]?.content?.cover,
       )
-      else -> TagRowState(uid, name, null, null, null, false, tagMapSync.cover(uid))
+      else -> TagRowState(uid, name, null, null, null, false, covers[uid])
     }
   }
 

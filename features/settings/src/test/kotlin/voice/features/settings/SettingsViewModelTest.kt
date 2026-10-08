@@ -52,6 +52,7 @@ class SettingsViewModelTest {
   }
   private val appInfoProvider = mockk<AppInfoProvider> {
     every { versionName } returns "1.2.3"
+    every { basedOnVoice } returns "26.6.1+106"
     every { analyticsIncluded } returns true
     every { supportDevelopmentIncluded } returns true
     every { installTime } returns Instant.parse("2026-06-01T00:00:00Z")
