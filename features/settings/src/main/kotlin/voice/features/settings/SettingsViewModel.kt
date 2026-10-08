@@ -25,6 +25,7 @@ import voice.core.data.store.AnalyticsConsentStore
 import voice.core.data.store.AutoRewindAmountStore
 import voice.core.data.store.DeveloperMenuUnlockedStore
 import voice.core.data.store.GridModeStore
+import voice.core.data.store.ListeningLogEnabledStore
 import voice.core.data.store.SeekTimeStore
 import voice.core.data.store.ServerConfigStore
 import voice.core.data.store.SleepTimerPreferenceStore
@@ -71,6 +72,8 @@ class SettingsViewModel(
   private val speakerSettingsStore: DataStore<SpeakerSettings>,
   @TagsEnabledStore
   private val tagsEnabledStore: DataStore<Boolean>,
+  @ListeningLogEnabledStore
+  private val listeningLogEnabledStore: DataStore<Boolean>,
   dispatcherProvider: DispatcherProvider,
 ) : SettingsListener {
 
@@ -98,6 +101,7 @@ class SettingsViewModel(
     val serverConfig by remember { serverConfigStore.data }.collectAsState(initial = ServerConfig())
     val speakerOn by remember { speakerSettingsStore.data }.collectAsState(initial = SpeakerSettings())
     val tagsOn by remember { tagsEnabledStore.data }.collectAsState(initial = true)
+    val listeningLogOn by remember { listeningLogEnabledStore.data }.collectAsState(initial = true)
     val showThemeColorSchemePref = remember {
       dynamicColorAvailability.isSupported()
     }
@@ -129,6 +133,7 @@ class SettingsViewModel(
       serverSetUp = serverConfig.url.isNotBlank(),
       pillowSpeakerOn = speakerOn.enabled,
       tagsOn = tagsOn,
+      listeningLogOn = listeningLogOn,
     )
   }
 
@@ -142,6 +147,10 @@ class SettingsViewModel(
 
   override fun toggleTags() {
     mainScope.launch { tagsEnabledStore.updateData { !it } }
+  }
+
+  override fun toggleListeningLog() {
+    mainScope.launch { listeningLogEnabledStore.updateData { !it } }
   }
 
   override fun close() {

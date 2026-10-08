@@ -18,6 +18,7 @@ import kotlinx.coroutines.withContext
 import voice.core.data.BookId
 import voice.core.data.repo.BookRepository
 import voice.core.data.store.CurrentBookStore
+import voice.core.data.store.ListeningLogEnabledStore
 import voice.core.initializer.AppInitializer
 import voice.core.logging.api.Logger
 import voice.core.playback.playstate.PlayStateManager
@@ -43,7 +44,8 @@ public data class LoggedBook(
  * A plain-text listening log: one line per start and per stop, with the local
  * time and its offset, the book's title, and where in the book it was. One file
  * per local date, in the app's external files directory under listening-log/,
- * so it can be pulled off the phone with adb or USB.
+ * so it can be pulled off the phone with adb or USB. Switched off in Settings,
+ * nothing is written (what was written stays).
  */
 @Inject
 @ContributesIntoSet(AppScope::class)
@@ -56,15 +58,18 @@ public class ListeningLog(
   private val clock: Clock,
   private val scope: CoroutineScope,
   private val logNotes: LogNotes,
+  @ListeningLogEnabledStore
+  private val enabledStore: DataStore<Boolean>,
 ) : AppInitializer {
 
   override fun onAppStart(application: Application) {
     val directory = File(context.getExternalFilesDir(null) ?: context.filesDir, "listening-log")
     scope.launch {
-      record(playStateManager.playStateFlow, directory, clock) { currentBook() }
+      record(playStateManager.playStateFlow, directory, clock, enabled = { enabledStore.data.first() }) { currentBook() }
     }
     scope.launch {
       logNotes.notes.collect { note ->
+        if (!enabledStore.data.first()) return@collect
         val time = ZonedDateTime.ofInstant(java.time.Instant.ofEpochMilli(note.atMillis), clock.zone)
         append(directory, time, formatNote(time, note), Dispatchers.IO)
       }
@@ -83,6 +88,7 @@ public class ListeningLog(
       directory: File,
       clock: Clock,
       io: CoroutineContext = Dispatchers.IO,
+      enabled: suspend () -> Boolean = { true },
       book: suspend () -> LoggedBook?,
     ) {
       playStates
@@ -92,6 +98,7 @@ public class ListeningLog(
           val now = ZonedDateTime.now(clock)
           // The position is flushed to the database when play/pause changes; give that a moment.
           if (state == PlayState.Paused) delay(STOP_SETTLE)
+          if (!enabled()) return@collect
           val entry = book() ?: return@collect
           val action = if (state == PlayState.Playing) "START" else "STOP"
           append(directory, now, formatLine(now, action, entry), io)

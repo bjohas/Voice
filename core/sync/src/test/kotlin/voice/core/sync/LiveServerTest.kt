@@ -36,6 +36,7 @@ class LiveServerTest {
       currentBookStore = MemoryDataStore<BookId?>(null),
       directory = SyncDirectory(books = books, stateFile = File(temp.root, "state.json")),
       rescan = {},
+      logEnabled = MemoryDataStore(true),
     )
     sync.runSync()
 

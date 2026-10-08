@@ -40,6 +40,7 @@ class SettingsViewModelTest {
   private val serverConfigStore = MemoryDataStore(ServerConfig(url = "https://example.org/r/Audiobooks/"))
   private val speakerSettingsStore = MemoryDataStore(SpeakerSettings())
   private val tagsEnabledStore = MemoryDataStore(true)
+  private val listeningLogEnabledStore = MemoryDataStore(true)
   private val themeColorSchemeStore = MemoryDataStore(ThemeColorScheme.BVoiceOrange)
   private val autoRewindAmountStore = MemoryDataStore(10)
   private val seekTimeStore = MemoryDataStore(30)
@@ -82,6 +83,7 @@ class SettingsViewModelTest {
     serverConfigStore = serverConfigStore,
     speakerSettingsStore = speakerSettingsStore,
     tagsEnabledStore = tagsEnabledStore,
+    listeningLogEnabledStore = listeningLogEnabledStore,
     dispatcherProvider = DispatcherProvider(scope.coroutineContext, scope.coroutineContext, scope.coroutineContext),
   )
 
@@ -112,6 +114,9 @@ class SettingsViewModelTest {
       while (state.pillowSpeakerOn) state = awaitItem()
       viewModel.toggleTags()
       while (state.tagsOn) state = awaitItem()
+      viewModel.toggleListeningLog()
+      while (state.listeningLogOn) state = awaitItem()
+      assertEquals(expected = false, actual = listeningLogEnabledStore.data.first())
       assertEquals(expected = false, actual = serverConfigStore.data.first().enabled)
       assertEquals(expected = false, actual = speakerSettingsStore.data.first().enabled)
       assertEquals(expected = false, actual = tagsEnabledStore.data.first())

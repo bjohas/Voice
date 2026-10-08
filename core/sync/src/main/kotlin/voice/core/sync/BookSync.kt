@@ -18,6 +18,7 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import voice.core.data.BookId
 import voice.core.data.store.CurrentBookStore
+import voice.core.data.store.ListeningLogEnabledStore
 import voice.core.data.store.ServerConfigStore
 import voice.core.data.store.ServerSelectionStore
 import voice.core.data.sync.ServerConfig
@@ -52,6 +53,8 @@ public class BookSync(
   private val currentBookStore: DataStore<BookId?>,
   private val directory: SyncDirectory,
   private val rescan: LibraryRescan,
+  @ListeningLogEnabledStore
+  private val logEnabled: DataStore<Boolean>,
 ) {
 
   private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
@@ -127,7 +130,12 @@ public class BookSync(
       } finally {
         rescan.rescan()
       }
-      val logs = withContext(Dispatchers.IO) { logUpload.run(configWithDeviceName()) }
+      // The listening log switched off: nothing is handed over either.
+      val logs = if (logEnabled.data.first()) {
+        withContext(Dispatchers.IO) { logUpload.run(configWithDeviceName()) }
+      } else {
+        LogUpload.Result()
+      }
       (progress.value as? SyncProgress.Finished)?.let { finished ->
         progress.value = finished.copy(logsSent = logs.sent, logError = logs.error)
       }

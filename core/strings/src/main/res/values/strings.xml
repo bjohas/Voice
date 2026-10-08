@@ -323,6 +323,8 @@
     <string name="server_books.dialog.device">Device name</string>
     <string name="server_books.dialog.device_hint">Names this phone\'s listening logs on the server</string>
     <!-- NFC tags: Tonies and other tags as keys to server books (NFC-TAGS.md). -->
+    <string name="listening_log.title">Listening log</string>
+    <string name="listening_log.summary">A record of what was played and when, on this phone (and handed to the server, if one is used)</string>
     <string name="tags.title">Tags</string>
     <string name="server_setup.title">Set up the server</string>
     <string name="server_setup.message">Use the server at %1$s? This replaces the server address and key saved on this phone.</string>

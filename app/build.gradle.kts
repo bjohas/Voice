@@ -161,6 +161,15 @@ tasks.matching {
   enabled = false
 }
 
+// bVoice: debug builds (installed by hand, never published) keep the highest
+// version code, as they had before bVoice had its own, so they always install
+// over each other; release builds use bvoice.versionCode.
+androidComponents {
+  onVariants(selector().withBuildType("debug")) { variant ->
+    variant.outputs.forEach { it.versionCode.set(Int.MAX_VALUE) }
+  }
+}
+
 dependencies {
   implementation(projects.core.strings)
   implementation(projects.core.ui)

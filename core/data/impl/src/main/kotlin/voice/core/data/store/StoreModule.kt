@@ -168,6 +168,13 @@ public object StoreModule {
 
   @Provides
   @SingleIn(AppScope::class)
+  @ListeningLogEnabledStore
+  private fun listeningLogEnabled(factory: VoiceDataStoreFactory): DataStore<Boolean> {
+    return factory.boolean("listeningLogEnabled", defaultValue = true)
+  }
+
+  @Provides
+  @SingleIn(AppScope::class)
   @TagsEnabledStore
   private fun tagsEnabled(factory: VoiceDataStoreFactory): DataStore<Boolean> {
     return factory.boolean("tagsEnabled", defaultValue = true)

@@ -24,6 +24,7 @@ data class SettingsViewState(
   val serverSetUp: Boolean,
   val pillowSpeakerOn: Boolean,
   val tagsOn: Boolean,
+  val listeningLogOn: Boolean,
 ) {
 
   enum class Dialog {
@@ -54,6 +55,7 @@ data class SettingsViewState(
         serverSetUp = true,
         pillowSpeakerOn = true,
         tagsOn = false,
+        listeningLogOn = true,
       )
     }
   }

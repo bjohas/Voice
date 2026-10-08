@@ -23,6 +23,7 @@ class BookSyncTest {
   private lateinit var books: File
   private lateinit var config: MemoryDataStore<ServerConfig>
   private val selection = MemoryDataStore(emptySet<String>())
+  private val logEnabled = MemoryDataStore(true)
   private val currentBook = MemoryDataStore<BookId?>(null)
   private var rescans = 0
   private lateinit var sync: BookSync
@@ -44,6 +45,7 @@ class BookSyncTest {
       currentBookStore = currentBook,
       directory = SyncDirectory(books = books, stateFile = File(temp.root, "state/state.json")),
       rescan = { rescans++ },
+      logEnabled = logEnabled,
     )
   }
 
@@ -182,6 +184,14 @@ class BookSyncTest {
     text: String,
   ) {
     File(temp.root, "listening-log").apply { mkdirs() }.resolve(name).writeText(text)
+  }
+
+  @Test
+  fun `with the listening log switched off, no logs are uploaded`() = runTest {
+    logEnabled.updateData { false }
+    logDay("2026-09-28.txt", "one\n")
+    sync.runSync()
+    assertEquals(emptyMap<String, String>(), server.logs)
   }
 
   @Test

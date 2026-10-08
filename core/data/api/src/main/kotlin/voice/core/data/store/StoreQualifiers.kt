@@ -65,6 +65,10 @@ public annotation class TagMapStore
 @Qualifier
 public annotation class LocalTagMapStore
 
+/** The listening log switched on in Settings: off, nothing is recorded or handed to the server. */
+@Qualifier
+public annotation class ListeningLogEnabledStore
+
 /** Tags switched on in Settings: off, the phone does not read tags at all. */
 @Qualifier
 public annotation class TagsEnabledStore

@@ -1,5 +1,5 @@
 • Set up the server by scanning a QR code; no server address or key is built into the app
 • NFC tags: choose a tag's book on the phone; works without a server
-• On/off switches for the server, the pillow speaker and tags
+• On/off switches for the server, the pillow speaker, tags and the listening log
 • bVoice orange colour scheme
 • Fixes: no crash on a bad server answer, downloaded books are never deleted by a broken server answer, Android 12 speaker fix

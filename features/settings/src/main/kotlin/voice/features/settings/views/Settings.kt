@@ -154,6 +154,16 @@ private fun Settings(
         )
       }
       item {
+        FeatureRow(
+          icon = VoiceIcons.History,
+          title = stringResource(StringsR.string.listening_log_title),
+          summary = stringResource(StringsR.string.listening_log_summary),
+          checked = viewState.listeningLogOn,
+          onOpen = null,
+          onToggle = listener::toggleListeningLog,
+        )
+      }
+      item {
         ThemeModeRow(viewState.themeMode, listener::onThemeModeRowClick)
       }
       if (viewState.showThemeColorSchemePref) {
@@ -370,7 +380,8 @@ private fun Dialog(
 
 /**
  * One of bVoice's own features: the left part opens its page, the switch on
- * the right turns it on or off.
+ * the right turns it on or off. Without a page ([onOpen] null), a tap anywhere
+ * toggles it.
  */
 @Composable
 private fun FeatureRow(
@@ -378,7 +389,7 @@ private fun FeatureRow(
   title: String,
   summary: String,
   checked: Boolean,
-  onOpen: () -> Unit,
+  onOpen: (() -> Unit)?,
   onToggle: () -> Unit,
 ) {
   Row(
@@ -386,7 +397,7 @@ private fun FeatureRow(
     verticalAlignment = Alignment.CenterVertically,
   ) {
     ListItem(
-      modifier = Modifier.weight(1F).clickable(onClick = onOpen),
+      modifier = Modifier.weight(1F).clickable(onClick = onOpen ?: onToggle),
       leadingContent = { Icon(imageVector = icon, contentDescription = null) },
       supportingContent = {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {

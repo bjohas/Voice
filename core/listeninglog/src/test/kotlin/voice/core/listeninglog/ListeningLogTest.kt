@@ -43,6 +43,29 @@ class ListeningLogTest {
   }
 
   @Test
+  fun `switched off, nothing is written`() = runTest {
+    val clock = Clock.fixed(Instant.parse("2026-09-29T21:14:03Z"), london)
+    val directory = temp.newFolder("off")
+    val states = MutableStateFlow(PlayState.Paused)
+    backgroundScope.launch {
+      ListeningLog.record(
+        states,
+        directory,
+        clock,
+        io = kotlinx.coroutines.test.StandardTestDispatcher(testScheduler),
+        enabled = { false },
+      ) { LoggedBook("Room on the Broom", 0, 1_500_000) }
+    }
+    runCurrent()
+    states.value = PlayState.Playing
+    runCurrent()
+    states.value = PlayState.Paused
+    advanceTimeBy(ListeningLog.STOP_SETTLE + 1.seconds)
+    runCurrent()
+    assertFalse(File(directory, "2026-09-29.txt").exists())
+  }
+
+  @Test
   fun `records starts and stops, not the paused state the app opens in`() = runTest {
     val clock = Clock.fixed(Instant.parse("2026-09-29T21:14:03Z"), london)
     val directory = temp.newFolder("log")

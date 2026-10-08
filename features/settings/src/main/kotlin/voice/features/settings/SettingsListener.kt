@@ -29,6 +29,7 @@ interface SettingsListener {
   fun toggleServer()
   fun togglePillowSpeaker()
   fun toggleTags()
+  fun toggleListeningLog()
   fun onAppVersionClick()
 
   fun openDeveloperMenu()
@@ -59,6 +60,7 @@ interface SettingsListener {
       override fun toggleServer() {}
       override fun togglePillowSpeaker() {}
       override fun toggleTags() {}
+      override fun toggleListeningLog() {}
       override fun onAppVersionClick() {}
       override fun openDeveloperMenu() {}
     }

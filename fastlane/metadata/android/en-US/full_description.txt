@@ -7,7 +7,7 @@ bVoice is Voice, the clean audiobook player by Paul Woitaschek, with a few addit
 • <b>NFC tags:</b> hold a tag to the phone to start a book. Tonie figures and plain NFC cards or stickers work; give each a book on the phone or on the server.
 • <b>A listening log</b> of what was played and when, kept on the phone and, if you use a server, handed to it.
 
-Each of these can be switched off in Settings. Without a server, bVoice is Voice plus the pillow speaker and NFC tags.
+Each of these, the listening log included, can be switched off in Settings. Without a server, bVoice is Voice plus the pillow speaker and NFC tags.
 
 <b>Everything from Voice</b>
 
