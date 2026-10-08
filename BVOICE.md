@@ -101,6 +101,13 @@ figures (only the tag's ID is read).
 - **Labels:** each tag shows *server*, *phone* or *override*.
 - **Code:** `:core:tags`, `:features:tags`.
 
+Just for the avoidance of doubt: Tonies don't store their own audio, so bVoice
+cannot play back the Tonie audio. However, the Tonie can be used to trigger any
+audio that you have got on your player. Only the NFC ID is used, so the audio
+is unrelated to the Tonie figure itself. There is some discussion as to whether
+the NFC ID of a Tonie can be hidden; in my tests, it was possible for Android
+to react to the NFC ID.
+
 ## Listening log
 
 A plain-text file per day (`Android/data/net.opendeved.bVoice/files/listening-log/`),
